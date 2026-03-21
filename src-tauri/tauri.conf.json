@@ -26,7 +26,8 @@
         "resizable": true,
         "titleBarStyle": "Overlay",
         "hiddenTitle": true,
-        "acceptFirstMouse": true
+        "acceptFirstMouse": true,
+        "trafficLightPosition": { "x": 16, "y": 18 }
       }
     ],
     "security": {

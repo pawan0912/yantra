@@ -3,6 +3,11 @@
 /* Use class-based dark mode instead of media query */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* macOS traffic light inset — 16px left offset + 43px buttons + 11px padding = 70px */
+:root {
+  --traffic-light-inset: 70px;
+}
+
 /* macOS system font stack */
 :root {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
