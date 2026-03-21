@@ -1,5 +1,15 @@
 import { lazy } from "react";
 import type { ComponentType, LazyExoticComponent } from "react";
+import type { LucideIcon } from "lucide-react";
+import {
+  Braces,
+  KeyRound,
+  Binary,
+  Link,
+  Clock,
+  Terminal,
+  Palette,
+} from "lucide-react";
 
 export type ToolProps = {
   clipboardText: string;
@@ -9,7 +19,7 @@ export type ToolProps = {
 export type ToolMeta = {
   id: string;
   name: string;
-  icon: string;
+  icon: LucideIcon;
   shortcut: string;
   component: LazyExoticComponent<ComponentType<ToolProps>>;
   description: string;
@@ -21,7 +31,7 @@ export const tools: ToolMeta[] = [
   {
     id: "json",
     name: "JSON Formatter",
-    icon: "{ }",
+    icon: Braces,
     shortcut: "1",
     component: lazy(() =>
       import("./json/JsonFormatter").then((m) => ({ default: m.JsonFormatter }))
@@ -33,7 +43,7 @@ export const tools: ToolMeta[] = [
   {
     id: "jwt",
     name: "JWT Decoder",
-    icon: "🔑",
+    icon: KeyRound,
     shortcut: "2",
     component: lazy(() =>
       import("./jwt/JwtDecoder").then((m) => ({ default: m.JwtDecoder }))
@@ -45,7 +55,7 @@ export const tools: ToolMeta[] = [
   {
     id: "base64",
     name: "Base64",
-    icon: "Aa",
+    icon: Binary,
     shortcut: "3",
     component: lazy(() =>
       import("./base64/Base64Tool").then((m) => ({ default: m.Base64Tool }))
@@ -57,7 +67,7 @@ export const tools: ToolMeta[] = [
   {
     id: "url",
     name: "URL Parser",
-    icon: "🔗",
+    icon: Link,
     shortcut: "4",
     component: lazy(() =>
       import("./url/UrlParser").then((m) => ({ default: m.UrlParser }))
@@ -69,7 +79,7 @@ export const tools: ToolMeta[] = [
   {
     id: "timestamp",
     name: "Timestamp",
-    icon: "🕐",
+    icon: Clock,
     shortcut: "5",
     component: lazy(() =>
       import("./timestamp/TimestampConverter").then((m) => ({ default: m.TimestampConverter }))
@@ -81,7 +91,7 @@ export const tools: ToolMeta[] = [
   {
     id: "curl",
     name: "cURL Converter",
-    icon: "⟩_",
+    icon: Terminal,
     shortcut: "6",
     component: lazy(() =>
       import("./curl/CurlConverter").then((m) => ({ default: m.CurlConverter }))
@@ -93,7 +103,7 @@ export const tools: ToolMeta[] = [
   {
     id: "color",
     name: "Color Converter",
-    icon: "🎨",
+    icon: Palette,
     shortcut: "7",
     component: lazy(() =>
       import("./color/ColorConverter").then((m) => ({ default: m.ColorConverter }))

@@ -102,7 +102,7 @@ export function CommandPalette({ isOpen, onClose, onSelect }: CommandPaletteProp
                   : "text-gray-700 dark:text-gray-300 hover:bg-gray-100/80 dark:hover:bg-white/[0.06]"
               )}
             >
-              <span className="w-6 text-center text-xs opacity-80">{tool.icon}</span>
+              <tool.icon className="w-4 h-4 opacity-70 flex-shrink-0" strokeWidth={1.5} />
               <div className="flex-1 min-w-0">
                 <div className="font-medium">{tool.name}</div>
                 <div className="text-[11px] text-gray-500 dark:text-gray-400 truncate mt-0.5">
