@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { CopyButton } from "./CopyButton";
 import { cn } from "../../lib/utils";
 
@@ -40,6 +40,9 @@ function PasteIcon({ match, onClick }: { match: boolean; onClick: () => void }):
   );
 }
 
+const PANE_HEADER = "flex items-center h-7 px-3 border-b border-gray-200/40 dark:border-white/[0.04]";
+const PANE_LABEL = "text-[10px] font-semibold uppercase tracking-widest text-gray-400/80 dark:text-gray-500/80";
+
 export function ToolPane({
   inputValue,
   onInputChange,
@@ -53,8 +56,10 @@ export function ToolPane({
   clipboardMatch = false,
 }: ToolPaneProps): React.ReactElement {
   const [pasted, setPasted] = useState(false);
+  const [splitPercent, setSplitPercent] = useState(50);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dragging = useRef(false);
 
-  // Reset pasted state when clipboard changes
   useEffect(() => {
     setPasted(false);
   }, [clipboardText]);
@@ -67,6 +72,31 @@ export function ToolPane({
   };
 
   const showPasteHint = clipboardText && !pasted && !inputValue;
+
+  const onMouseDown = useCallback((e: React.MouseEvent): void => {
+    e.preventDefault();
+    dragging.current = true;
+
+    const onMouseMove = (ev: MouseEvent): void => {
+      if (!dragging.current || !containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const pct = ((ev.clientX - rect.left) / rect.width) * 100;
+      setSplitPercent(Math.max(20, Math.min(80, pct)));
+    };
+
+    const onMouseUp = (): void => {
+      dragging.current = false;
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    };
+
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
+  }, []);
 
   return (
     <div className="flex flex-col h-full">
@@ -91,14 +121,12 @@ export function ToolPane({
         </div>
       </div>
 
-      {/* Split pane */}
-      <div className="flex-1 grid grid-cols-2 min-h-0">
+      {/* Split pane — resizable */}
+      <div className="flex-1 flex min-h-0" ref={containerRef}>
         {/* Input */}
-        <div className="flex flex-col min-h-0 border-r border-gray-200/60 dark:border-white/[0.06]">
-          <div className="flex items-center justify-between px-3 py-1.5 border-b border-gray-200/40 dark:border-white/[0.04]">
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400/80 dark:text-gray-500/80">
-              Input
-            </span>
+        <div className="flex flex-col min-h-0 min-w-0" style={{ width: `${splitPercent}%` }}>
+          <div className={PANE_HEADER}>
+            <span className={cn(PANE_LABEL, "flex-1")}>Input</span>
             {showPasteHint && (
               <PasteIcon match={clipboardMatch} onClick={handlePaste} />
             )}
@@ -114,10 +142,18 @@ export function ToolPane({
           />
         </div>
 
+        {/* Drag handle */}
+        <div
+          className="w-px bg-gray-200/60 dark:bg-white/[0.06] relative cursor-col-resize group flex-shrink-0"
+          onMouseDown={onMouseDown}
+        >
+          <div className="absolute inset-y-0 -left-1 -right-1 group-hover:bg-blue-500/10 transition-colors duration-150" />
+        </div>
+
         {/* Output */}
-        <div className="flex flex-col min-h-0">
-          <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400/80 dark:text-gray-500/80 border-b border-gray-200/40 dark:border-white/[0.04]">
-            Output
+        <div className="flex flex-col min-h-0 min-w-0 flex-1">
+          <div className={PANE_HEADER}>
+            <span className={PANE_LABEL}>Output</span>
           </div>
           <div className="flex-1 overflow-auto p-3">
             {outputElement ?? (

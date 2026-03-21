@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { tools } from "../../tools/registry";
 import { cn } from "../../lib/utils";
 import { SettingsScreen } from "./SettingsPanel";
@@ -11,9 +11,29 @@ type AppShellProps = {
   onSettingsToggle: () => void;
 };
 
+function SidebarToggle({ collapsed, onClick }: { collapsed: boolean; onClick: () => void }): React.ReactElement {
+  return (
+    <button
+      onClick={onClick}
+      title={collapsed ? "Show sidebar" : "Hide sidebar"}
+      className="p-1 rounded-md text-gray-400/70 dark:text-gray-500/70 hover:text-gray-600 dark:hover:text-gray-300
+                 hover:bg-gray-200/60 dark:hover:bg-white/[0.06] transition-all duration-150 ease-out"
+    >
+      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        {collapsed ? (
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
+        ) : (
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        )}
+      </svg>
+    </button>
+  );
+}
+
 export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettings, onSettingsToggle }: AppShellProps): React.ReactElement {
   const activeTool = tools.find((t) => t.id === activeToolId) ?? tools[0];
   const ActiveComponent = activeTool.component;
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const handleToolSelect = (toolId: string): void => {
     onToolSelect(toolId);
@@ -24,7 +44,13 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettin
   return (
     <div className="flex h-screen bg-white/80 dark:bg-gray-950/90 backdrop-blur-2xl text-gray-900 dark:text-gray-100">
       {/* Sidebar */}
-      <nav className="w-[180px] flex-shrink-0 border-r border-gray-200/60 dark:border-white/[0.06] bg-gray-50/80 dark:bg-white/[0.03] flex flex-col select-none">
+      <nav
+        className={cn(
+          "flex-shrink-0 border-r border-gray-200/60 dark:border-white/[0.06] bg-gray-50/80 dark:bg-white/[0.03] flex flex-col select-none",
+          "transition-[width] duration-200 ease-out overflow-hidden",
+          sidebarCollapsed ? "w-0 border-r-0" : "w-[180px]"
+        )}
+      >
         {/* Spacer for native macOS traffic lights (titleBarStyle: Overlay) — draggable */}
         <div className="h-12 flex-shrink-0" data-tauri-drag-region />
 
@@ -35,7 +61,7 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettin
               key={tool.id}
               onClick={() => handleToolSelect(tool.id)}
               className={cn(
-                "w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-lg text-[13px] text-left",
+                "w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-lg text-[13px] text-left whitespace-nowrap",
                 "transition-all duration-150 ease-out",
                 !showSettings && tool.id === activeToolId
                   ? "bg-blue-500/12 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 font-medium shadow-sm shadow-blue-500/5"
@@ -56,7 +82,7 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettin
           <button
             onClick={onSettingsToggle}
             className={cn(
-              "w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-lg text-[13px] text-left",
+              "w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-lg text-[13px] text-left whitespace-nowrap",
               "transition-all duration-150 ease-out",
               showSettings
                 ? "bg-blue-500/12 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 font-medium shadow-sm shadow-blue-500/5"
@@ -78,7 +104,8 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettin
       {/* Main content */}
       <main className="flex-1 min-w-0 min-h-0 flex flex-col">
         {/* Title bar — draggable */}
-        <div className="h-12 flex items-center px-4 border-b border-gray-200/60 dark:border-white/[0.06] flex-shrink-0" data-tauri-drag-region>
+        <div className="h-12 flex items-center gap-2 px-4 border-b border-gray-200/60 dark:border-white/[0.06] flex-shrink-0" data-tauri-drag-region>
+          <SidebarToggle collapsed={sidebarCollapsed} onClick={() => setSidebarCollapsed((c) => !c)} />
           <span className="text-[13px] font-medium text-gray-500 dark:text-gray-400 pointer-events-none">
             {titleText}
           </span>
