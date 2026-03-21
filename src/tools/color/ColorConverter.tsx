@@ -27,7 +27,10 @@ export function ColorConverter({ clipboardText }: ToolProps): React.ReactElement
 
   useEffect(() => {
     if (clipboardText && !hasUserTyped.current && !input) {
-      setInput(clipboardText);
+      const trimmed = clipboardText.trim();
+      if (/^#[0-9a-fA-F]{3,8}$/.test(trimmed) || /^rgba?\(/.test(trimmed) || /^hsla?\(/.test(trimmed)) {
+        setInput(clipboardText);
+      }
     }
   }, [clipboardText, input]);
 

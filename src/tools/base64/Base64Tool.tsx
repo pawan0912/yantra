@@ -16,7 +16,10 @@ export function Base64Tool({ clipboardText }: ToolProps): React.ReactElement {
 
   useEffect(() => {
     if (clipboardText && !hasUserTyped.current && !input) {
-      setInput(clipboardText);
+      const trimmed = clipboardText.trim();
+      if (/^[A-Za-z0-9+/=_-]{4,}$/.test(trimmed) || trimmed.startsWith("data:")) {
+        setInput(clipboardText);
+      }
     }
   }, [clipboardText, input]);
 

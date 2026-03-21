@@ -10,7 +10,10 @@ export function JsonFormatter({ clipboardText }: ToolProps): React.ReactElement 
 
   useEffect(() => {
     if (clipboardText && !hasUserTyped.current && !input) {
-      setInput(clipboardText);
+      const trimmed = clipboardText.trim();
+      if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+        setInput(clipboardText);
+      }
     }
   }, [clipboardText, input]);
 

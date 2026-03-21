@@ -10,7 +10,10 @@ export function UrlParser({ clipboardText }: ToolProps): React.ReactElement {
 
   useEffect(() => {
     if (clipboardText && !hasUserTyped.current && !input) {
-      setInput(clipboardText);
+      const trimmed = clipboardText.trim();
+      if (/^https?:\/\//.test(trimmed) || /^\w+:\/\//.test(trimmed) || trimmed.includes("?") || trimmed.includes("%")) {
+        setInput(clipboardText);
+      }
     }
   }, [clipboardText, input]);
 

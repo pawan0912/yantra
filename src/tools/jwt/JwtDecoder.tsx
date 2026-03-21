@@ -15,7 +15,10 @@ export function JwtDecoder({ clipboardText }: ToolProps): React.ReactElement {
 
   useEffect(() => {
     if (clipboardText && !hasUserTyped.current && !input) {
-      setInput(clipboardText);
+      const trimmed = clipboardText.trim();
+      if (trimmed.split(".").length === 3 && trimmed.startsWith("ey")) {
+        setInput(clipboardText);
+      }
     }
   }, [clipboardText, input]);
 

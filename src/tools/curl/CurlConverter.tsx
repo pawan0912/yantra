@@ -21,7 +21,9 @@ export function CurlConverter({ clipboardText }: ToolProps): React.ReactElement 
 
   useEffect(() => {
     if (clipboardText && !hasUserTyped.current && !input) {
-      setInput(clipboardText);
+      if (clipboardText.trim().toLowerCase().startsWith("curl")) {
+        setInput(clipboardText);
+      }
     }
   }, [clipboardText, input]);
 
