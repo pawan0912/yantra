@@ -3,9 +3,9 @@
 /* Use class-based dark mode instead of media query */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* macOS traffic light inset — 16px left offset + 43px buttons + 11px padding = 70px */
+/* macOS traffic light inset — 8px default offset + 43px buttons + 7px gap = 58px */
 :root {
-  --traffic-light-inset: 70px;
+  --traffic-light-inset: 58px;
 }
 
 /* macOS system font stack */
