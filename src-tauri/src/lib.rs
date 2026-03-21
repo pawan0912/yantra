@@ -1,4 +1,3 @@
-use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
 use tauri::menu::{MenuBuilder, MenuItem, SubmenuBuilder, PredefinedMenuItem};
 use tauri::{Emitter, Manager, WebviewWindow};
 use tauri_plugin_global_shortcut::GlobalShortcutExt;
@@ -79,39 +78,6 @@ pub fn run() {
                     let _ = app_handle.emit("menu-settings", ());
                 }
             });
-
-            // ── Tray icon ──
-            let tray_show = MenuItem::with_id(app, "show", "Show Yantra", true, None::<&str>)?;
-            let tray_quit = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
-            let tray_menu = tauri::menu::Menu::with_items(app, &[&tray_show, &tray_quit])?;
-
-            TrayIconBuilder::new()
-                .icon(app.default_window_icon().unwrap().clone())
-                .menu(&tray_menu)
-                .show_menu_on_left_click(false)
-                .on_menu_event(move |app, event| match event.id().as_ref() {
-                    "quit" => app.exit(0),
-                    "show" => {
-                        if let Some(window) = app.get_webview_window("main") {
-                            show_and_focus(&window);
-                        }
-                    }
-                    _ => {}
-                })
-                .on_tray_icon_event(|tray, event| {
-                    if let TrayIconEvent::Click {
-                        button: MouseButton::Left,
-                        button_state: MouseButtonState::Up,
-                        ..
-                    } = event
-                    {
-                        let app = tray.app_handle();
-                        if let Some(window) = app.get_webview_window("main") {
-                            show_and_focus(&window);
-                        }
-                    }
-                })
-                .build(app)?;
 
             Ok(())
         })
