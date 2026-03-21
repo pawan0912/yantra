@@ -1,13 +1,19 @@
 import { useState, useEffect, useCallback } from "react";
 import { AppShell } from "./components/layout/AppShell";
 import { CommandPalette } from "./components/layout/CommandPalette";
+import { SettingsPanel } from "./components/layout/SettingsPanel";
 import { tools } from "./tools/registry";
 import { useClipboard } from "./hooks/useClipboard";
+import { initTheme } from "./store/theme";
 import "./App.css";
+
+// Initialize theme on load
+initTheme();
 
 export function App(): React.ReactElement {
   const [activeToolId, setActiveToolId] = useState(tools[0].id);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const { clipboardText, refresh } = useClipboard();
 
   useEffect(() => {
@@ -26,6 +32,12 @@ export function App(): React.ReactElement {
         return;
       }
 
+      if (e.metaKey && e.key === ",") {
+        e.preventDefault();
+        setSettingsOpen((open) => !open);
+        return;
+      }
+
       if (e.metaKey && e.key >= "1" && e.key <= "9") {
         e.preventDefault();
         const tool = tools.find((t) => t.shortcut === e.key);
@@ -33,11 +45,15 @@ export function App(): React.ReactElement {
         return;
       }
 
-      if (e.key === "Escape" && paletteOpen) {
-        setPaletteOpen(false);
+      if (e.key === "Escape") {
+        if (settingsOpen) {
+          setSettingsOpen(false);
+        } else if (paletteOpen) {
+          setPaletteOpen(false);
+        }
       }
     },
-    [paletteOpen]
+    [paletteOpen, settingsOpen]
   );
 
   useEffect(() => {
@@ -47,11 +63,20 @@ export function App(): React.ReactElement {
 
   return (
     <>
-      <AppShell activeToolId={activeToolId} onToolSelect={setActiveToolId} clipboardText={clipboardText} />
+      <AppShell
+        activeToolId={activeToolId}
+        onToolSelect={setActiveToolId}
+        clipboardText={clipboardText}
+        onSettingsOpen={() => setSettingsOpen(true)}
+      />
       <CommandPalette
         isOpen={paletteOpen}
         onClose={() => setPaletteOpen(false)}
         onSelect={setActiveToolId}
+      />
+      <SettingsPanel
+        isOpen={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
       />
     </>
   );
