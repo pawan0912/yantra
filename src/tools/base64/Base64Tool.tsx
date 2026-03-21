@@ -91,7 +91,7 @@ export function Base64Tool({ clipboardText, clipboardMatch }: ToolProps): React.
       sampleData={SAMPLE_DATA}
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
-      placeholder="Hello, World! or SGVsbG8sIFdvcmxkIQ=="
+      placeholder="Paste text to encode or Base64 to decode..."
       actions={[]}
       error={error}
     />

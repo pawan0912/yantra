@@ -46,7 +46,7 @@ export function UrlParser({ clipboardText, clipboardMatch }: ToolProps): React.R
       sampleData={SAMPLE_DATA}
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
-      placeholder="https://api.example.com/users?page=1&sort=name"
+      placeholder="Paste a URL to parse, encode, or decode..."
       actions={[
         { label: "Parse", onClick: () => setMode("parse"), active: mode === "parse" },
         { label: "Encode", onClick: () => setMode("encode"), active: mode === "encode" },

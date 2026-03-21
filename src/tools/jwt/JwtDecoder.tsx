@@ -102,7 +102,7 @@ export function JwtDecoder({ clipboardText, clipboardMatch }: ToolProps): React.
       sampleData={SAMPLE_DATA}
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
-      placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0..."
+      placeholder="Paste a JWT token to decode..."
       actions={[]}
       error={error}
     />

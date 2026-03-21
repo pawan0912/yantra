@@ -67,12 +67,12 @@ export function DiffViewer(_props: ToolProps): React.ReactElement {
         {/* Original */}
         <div className="flex-1 flex flex-col min-w-0 border-r border-gray-200/60 dark:border-white/[0.06]">
           <PaneHeader label="Original" />
-          <Textarea value={oldText} onChange={setOldText} placeholder="Paste original text here..." />
+          <Textarea value={oldText} onChange={setOldText} placeholder="Paste the original text..." />
         </div>
         {/* Modified */}
         <div className="flex-1 flex flex-col min-w-0">
           <PaneHeader label="Modified" />
-          <Textarea value={newText} onChange={setNewText} placeholder="Paste modified text here..." />
+          <Textarea value={newText} onChange={setNewText} placeholder="Paste the modified text..." />
         </div>
       </div>
 

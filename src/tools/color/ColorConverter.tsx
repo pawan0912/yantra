@@ -96,7 +96,7 @@ export function ColorConverter({ clipboardText, clipboardMatch }: ToolProps): Re
       sampleData={SAMPLE_DATA}
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
-      placeholder="#1D9E75 or rgb(29, 158, 117) or hsl(161, 69%, 37%)"
+      placeholder="Paste a color value (hex, rgb, or hsl)..."
       actions={[{ label: "Parse", onClick: () => setInput(input) }]}
       meta={meta}
       error={error}

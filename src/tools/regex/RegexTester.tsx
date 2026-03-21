@@ -61,7 +61,7 @@ export function RegexTester({ clipboardText, clipboardMatch }: ToolProps): React
         <input
           value={pattern}
           onChange={(e) => setPattern(e.target.value)}
-          placeholder="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+          placeholder="Enter a regex pattern..."
           className="flex-1 bg-transparent text-sm font-mono outline-none text-gray-800 dark:text-gray-200 placeholder:text-gray-300 dark:placeholder:text-gray-600"
           spellCheck={false}
         />
@@ -84,7 +84,7 @@ export function RegexTester({ clipboardText, clipboardMatch }: ToolProps): React
         <textarea
           value={testString}
           onChange={(e) => setTestString(e.target.value)}
-          placeholder="Contact us at hello@example.com or support@test.org"
+          placeholder="Paste text to test against the pattern..."
           className="p-3 bg-transparent text-sm font-mono resize-none outline-none border-r border-gray-200/60 dark:border-white/[0.06] text-gray-800 dark:text-gray-200 placeholder:text-gray-300 dark:placeholder:text-gray-600"
           spellCheck={false}
         />

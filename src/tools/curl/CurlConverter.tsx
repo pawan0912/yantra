@@ -73,7 +73,7 @@ export function CurlConverter({ clipboardText, clipboardMatch }: ToolProps): Rea
           />
         ) : undefined
       }
-      placeholder={'curl -X GET https://api.example.com/users \\\n  -H "Authorization: Bearer token"'}
+      placeholder="Paste a cURL command to convert..."
       actions={actions}
       meta={meta}
       error={error}

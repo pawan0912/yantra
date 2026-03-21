@@ -90,7 +90,7 @@ export function TimestampConverter({ clipboardText, clipboardMatch }: ToolProps)
       sampleData={SAMPLE_DATA}
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
-      placeholder="1711234567 or 2024-03-23T15:30:00Z"
+      placeholder="Paste a Unix timestamp or date string..."
       actions={[
         { label: "Convert", onClick: handleConvert },
         { label: "Now", onClick: handleNow },

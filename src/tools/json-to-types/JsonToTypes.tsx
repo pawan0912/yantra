@@ -44,7 +44,7 @@ export function JsonToTypes({ clipboardText, clipboardMatch }: ToolProps): React
           </pre>
         ) : undefined
       }
-      placeholder='{"id": 1, "name": "John", "email": "john@example.com"}'
+      placeholder="Paste JSON to generate TypeScript types or Zod schemas..."
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
       actions={[

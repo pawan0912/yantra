@@ -61,7 +61,7 @@ export function JsonFormatter({ clipboardText, clipboardMatch }: ToolProps): Rea
           />
         ) : undefined
       }
-      placeholder='{"name": "value", "count": 42}'
+      placeholder="Paste JSON to format or minify..."
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
       onClear={() => setOutput("")}
