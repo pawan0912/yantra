@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { ClipboardPaste } from "lucide-react";
 import { CopyButton } from "./CopyButton";
 import { cn } from "../../lib/utils";
+import { Button, Textarea, PaneHeader } from "../ui";
 
 type ToolAction = {
   label: string;
@@ -39,8 +40,6 @@ function PasteIcon({ match, onClick }: { match: boolean; onClick: () => void }):
   );
 }
 
-const PANE_HEADER = "flex items-center h-7 px-3 border-b border-gray-200/40 dark:border-white/[0.04]";
-const PANE_LABEL = "text-[10px] font-semibold uppercase tracking-widest text-gray-400/80 dark:text-gray-500/80";
 
 export function ToolPane({
   inputValue,
@@ -102,18 +101,14 @@ export function ToolPane({
       {/* Action bar */}
       <div className="flex items-center gap-1.5 px-3 py-2 border-b border-gray-200/60 dark:border-white/[0.06]">
         {actions.map((action) => (
-          <button
+          <Button
             key={action.label}
             onClick={action.onClick}
-            className={cn(
-              "px-3 py-1 text-xs font-medium rounded-md transition-all duration-150 ease-out",
-              action.active
-                ? "bg-blue-500 text-white shadow-sm shadow-blue-500/25"
-                : "bg-gray-100/80 dark:bg-white/[0.06] text-gray-600 dark:text-gray-400 hover:bg-gray-200/80 dark:hover:bg-white/[0.1] active:scale-[0.97]"
-            )}
+            variant="secondary"
+            active={action.active}
           >
             {action.label}
-          </button>
+          </Button>
         ))}
         <div className="ml-auto">
           <CopyButton text={outputValue} />
@@ -124,21 +119,12 @@ export function ToolPane({
       <div className="flex-1 flex min-h-0" ref={containerRef}>
         {/* Input */}
         <div className="flex flex-col min-h-0 min-w-0" style={{ width: `${splitPercent}%` }}>
-          <div className={PANE_HEADER}>
-            <span className={cn(PANE_LABEL, "flex-1")}>Input</span>
+          <PaneHeader label="Input">
             {showPasteHint && (
               <PasteIcon match={clipboardMatch} onClick={handlePaste} />
             )}
-          </div>
-          <textarea
-            value={inputValue}
-            onChange={(e) => onInputChange(e.target.value)}
-            className="flex-1 p-3 bg-transparent text-[13px] font-mono leading-relaxed text-gray-800 dark:text-gray-200
-                       resize-none focus:outline-none placeholder-gray-400/60 dark:placeholder-gray-600/60
-                       selection:bg-blue-500/20"
-            placeholder={placeholder}
-            spellCheck={false}
-          />
+          </PaneHeader>
+          <Textarea value={inputValue} onChange={onInputChange} placeholder={placeholder} />
         </div>
 
         {/* Drag handle */}
@@ -151,9 +137,7 @@ export function ToolPane({
 
         {/* Output */}
         <div className="flex flex-col min-h-0 min-w-0 flex-1">
-          <div className={PANE_HEADER}>
-            <span className={PANE_LABEL}>Output</span>
-          </div>
+          <PaneHeader label="Output" />
           <div className="flex-1 overflow-auto p-3">
             {outputElement ?? (
               <pre className="text-[13px] font-mono leading-relaxed text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-words">

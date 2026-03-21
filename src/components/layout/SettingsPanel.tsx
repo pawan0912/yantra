@@ -1,5 +1,6 @@
 import { useTheme } from "../../hooks/useTheme";
 import { cn } from "../../lib/utils";
+import { SectionTitle, Card, Kbd } from "../ui";
 
 const THEME_OPTIONS = [
   { value: "system" as const, label: "System", icon: "💻", desc: "Match macOS appearance" },
@@ -22,12 +23,7 @@ export function SettingsScreen(): React.ReactElement {
       <div className="max-w-lg mx-auto py-8 px-6 space-y-8">
         {/* Appearance */}
         <section>
-          <h3 className="text-[13px] font-semibold text-gray-900 dark:text-gray-100 mb-1">
-            Appearance
-          </h3>
-          <p className="text-[12px] text-gray-500 dark:text-gray-400 mb-3">
-            Choose how Yantra looks on your system.
-          </p>
+          <SectionTitle subtitle="Choose how Yantra looks on your system.">Appearance</SectionTitle>
           <div className="grid grid-cols-3 gap-3">
             {THEME_OPTIONS.map((opt) => (
               <button
@@ -51,30 +47,21 @@ export function SettingsScreen(): React.ReactElement {
 
         {/* Keyboard shortcuts */}
         <section>
-          <h3 className="text-[13px] font-semibold text-gray-900 dark:text-gray-100 mb-1">
-            Keyboard Shortcuts
-          </h3>
-          <p className="text-[12px] text-gray-500 dark:text-gray-400 mb-3">
-            Navigate faster with these shortcuts.
-          </p>
-          <div className="rounded-xl bg-gray-50/80 dark:bg-white/[0.03] ring-1 ring-gray-200/60 dark:ring-white/[0.06] divide-y divide-gray-200/60 dark:divide-white/[0.06]">
+          <SectionTitle subtitle="Navigate faster with these shortcuts.">Keyboard Shortcuts</SectionTitle>
+          <Card divided>
             {SHORTCUTS.map((s) => (
               <div key={s.keys} className="flex items-center justify-between px-4 py-2.5 text-[13px]">
                 <span className="text-gray-700 dark:text-gray-300">{s.desc}</span>
-                <kbd className="px-2 py-0.5 rounded-md bg-white dark:bg-white/[0.06] text-gray-500 dark:text-gray-400 font-mono text-[11px] shadow-sm ring-1 ring-gray-200/80 dark:ring-white/[0.08]">
-                  {s.keys}
-                </kbd>
+                <Kbd variant="contained">{s.keys}</Kbd>
               </div>
             ))}
-          </div>
+          </Card>
         </section>
 
         {/* About */}
         <section>
-          <h3 className="text-[13px] font-semibold text-gray-900 dark:text-gray-100 mb-1">
-            About
-          </h3>
-          <div className="rounded-xl bg-gray-50/80 dark:bg-white/[0.03] ring-1 ring-gray-200/60 dark:ring-white/[0.06] px-4 py-3 space-y-1">
+          <SectionTitle>About</SectionTitle>
+          <Card className="px-4 py-3 space-y-1">
             <div className="flex items-center justify-between text-[13px]">
               <span className="text-gray-600 dark:text-gray-400">Version</span>
               <span className="text-gray-900 dark:text-gray-200 font-mono text-[12px]">0.1.0</span>
@@ -83,7 +70,7 @@ export function SettingsScreen(): React.ReactElement {
               <span className="text-gray-600 dark:text-gray-400">Built with</span>
               <span className="text-gray-900 dark:text-gray-200 text-[12px]">Tauri v2 + React</span>
             </div>
-          </div>
+          </Card>
         </section>
       </div>
     </div>

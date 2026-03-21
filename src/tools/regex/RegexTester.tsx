@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Button } from "../../components/ui";
 import {
   testRegex,
   getMatchRanges,
@@ -10,29 +11,6 @@ import {
 type ToolProps = { clipboardText: string; clipboardMatch: boolean };
 
 const ALL_FLAGS = ["g", "i", "m", "s", "u"] as const;
-
-function FlagToggle({
-  flag,
-  active,
-  onToggle,
-}: {
-  flag: string;
-  active: boolean;
-  onToggle: () => void;
-}): React.ReactElement {
-  return (
-    <button
-      onClick={onToggle}
-      className={`px-1.5 py-0.5 rounded text-xs font-mono font-semibold transition-colors ${
-        active
-          ? "bg-blue-500/20 text-blue-600 dark:text-blue-400 ring-1 ring-blue-500/30"
-          : "bg-gray-100 text-gray-400 dark:bg-white/5 dark:text-gray-500 hover:bg-gray-200 dark:hover:bg-white/10"
-      }`}
-    >
-      {flag}
-    </button>
-  );
-}
 
 export function RegexTester({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
   const [pattern, setPattern] = useState("");
@@ -73,13 +51,7 @@ export function RegexTester({ clipboardText, clipboardMatch }: ToolProps): React
       <div className="flex items-center gap-1.5 px-3 py-2 border-b border-gray-200/60 dark:border-white/[0.06]">
         <span className="text-[11px] text-gray-400 dark:text-gray-500 mr-1">Presets</span>
         {REGEX_PRESETS.map((p) => (
-          <button
-            key={p.name}
-            onClick={() => applyPreset(p)}
-            className="px-2 py-0.5 rounded-md text-[11px] bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10 transition-colors"
-          >
-            {p.name}
-          </button>
+          <Button key={p.name} variant="small" onClick={() => applyPreset(p)}>{p.name}</Button>
         ))}
       </div>
 
@@ -96,7 +68,7 @@ export function RegexTester({ clipboardText, clipboardMatch }: ToolProps): React
         <span className="text-gray-400 font-mono text-sm">/</span>
         <div className="flex gap-1">
           {ALL_FLAGS.map((f) => (
-            <FlagToggle key={f} flag={f} active={flags.includes(f)} onToggle={() => toggleFlag(f)} />
+            <Button key={f} variant="small" active={flags.includes(f)} onClick={() => toggleFlag(f)} className="font-mono font-semibold">{f}</Button>
           ))}
         </div>
       </div>

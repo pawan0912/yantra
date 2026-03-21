@@ -1,12 +1,9 @@
 import { useState, useMemo } from "react";
 import { CopyButton } from "../../components/layout/CopyButton";
+import { Button, PaneHeader, Textarea } from "../../components/ui";
 import { computeDiff, getDiffStats, isJsonLike, tryFormatJson, formatUnifiedDiff } from "./diff.utils";
 import type { DiffLine } from "./diff.utils";
 import type { ToolProps } from "../registry";
-
-const PANE_HEADER = "flex items-center h-7 px-3 border-b border-gray-200/40 dark:border-white/[0.04]";
-const PANE_LABEL = "text-[10px] font-semibold uppercase tracking-widest text-gray-400/80 dark:text-gray-500/80";
-const TEXTAREA_CLASS = "flex-1 p-3 bg-transparent text-[13px] font-mono leading-relaxed text-gray-800 dark:text-gray-200 resize-none focus:outline-none placeholder-gray-400/60 dark:placeholder-gray-600/60 selection:bg-blue-500/20";
 
 function DiffOutput({ lines }: { lines: DiffLine[] }): React.ReactElement {
   return (
@@ -52,12 +49,7 @@ export function DiffViewer(_props: ToolProps): React.ReactElement {
     <div className="flex flex-col h-full">
       {/* Action bar */}
       <div className="flex items-center gap-1.5 px-3 py-2 border-b border-gray-200/60 dark:border-white/[0.06]">
-        <button
-          onClick={handleCompare}
-          className="px-3 py-1 text-xs font-medium rounded-md bg-blue-500 text-white shadow-sm shadow-blue-500/25 transition-all duration-150 ease-out active:scale-[0.97]"
-        >
-          Compare
-        </button>
+        <Button variant="primary" onClick={handleCompare}>Compare</Button>
         {stats && (
           <div className="flex items-center gap-2 ml-2 text-xs">
             <span className="text-green-600 dark:text-green-400">+{stats.added}</span>
@@ -74,37 +66,19 @@ export function DiffViewer(_props: ToolProps): React.ReactElement {
       <div className="flex min-h-0" style={{ height: "40%" }}>
         {/* Original */}
         <div className="flex-1 flex flex-col min-w-0 border-r border-gray-200/60 dark:border-white/[0.06]">
-          <div className={PANE_HEADER}>
-            <span className={PANE_LABEL}>Original</span>
-          </div>
-          <textarea
-            value={oldText}
-            onChange={(e) => setOldText(e.target.value)}
-            placeholder="Paste original text here..."
-            className={TEXTAREA_CLASS}
-            spellCheck={false}
-          />
+          <PaneHeader label="Original" />
+          <Textarea value={oldText} onChange={setOldText} placeholder="Paste original text here..." />
         </div>
         {/* Modified */}
         <div className="flex-1 flex flex-col min-w-0">
-          <div className={PANE_HEADER}>
-            <span className={PANE_LABEL}>Modified</span>
-          </div>
-          <textarea
-            value={newText}
-            onChange={(e) => setNewText(e.target.value)}
-            placeholder="Paste modified text here..."
-            className={TEXTAREA_CLASS}
-            spellCheck={false}
-          />
+          <PaneHeader label="Modified" />
+          <Textarea value={newText} onChange={setNewText} placeholder="Paste modified text here..." />
         </div>
       </div>
 
       {/* Diff output */}
       <div className="flex-1 flex flex-col min-h-0 border-t border-gray-200/60 dark:border-white/[0.06]">
-        <div className={PANE_HEADER}>
-          <span className={PANE_LABEL}>Diff</span>
-        </div>
+        <PaneHeader label="Diff" />
         <div className="flex-1 overflow-auto">
           {lines && lines.length > 0 ? (
             <DiffOutput lines={lines} />

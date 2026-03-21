@@ -3,6 +3,7 @@ import { Settings, PanelLeft, PanelLeftClose } from "lucide-react";
 import { tools } from "../../tools/registry";
 import { cn } from "../../lib/utils";
 import { SettingsScreen } from "./SettingsPanel";
+import { Kbd } from "../ui";
 
 type AppShellProps = {
   activeToolId: string;
@@ -76,9 +77,7 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettin
               >
                 <tool.icon className="w-4 h-4 opacity-70 flex-shrink-0" strokeWidth={1.5} />
                 <span className="truncate flex-1">{tool.name}</span>
-                <kbd className="text-[10px] text-gray-400/70 dark:text-gray-500/70 font-mono tabular-nums">
-                  {"\u2318"}{tool.shortcut}
-                </kbd>
+                <Kbd>{"\u2318"}{tool.shortcut}</Kbd>
               </button>
             ))}
           </div>
@@ -97,9 +96,7 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettin
             >
               <Settings className="w-4 h-4 opacity-70" strokeWidth={1.5} />
               <span>Settings</span>
-              <kbd className="ml-auto text-[10px] text-gray-400/70 dark:text-gray-500/70 font-mono">
-                {"\u2318"},
-              </kbd>
+              <Kbd className="ml-auto">{"\u2318"},</Kbd>
             </button>
           </div>
         </nav>
