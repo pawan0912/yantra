@@ -49,7 +49,7 @@ export function App(): React.ReactElement {
         return;
       }
 
-      if (e.metaKey && e.key >= "1" && e.key <= "9") {
+      if (e.metaKey && ((e.key >= "1" && e.key <= "9") || e.key === "0")) {
         e.preventDefault();
         const tool = tools.find((t) => t.shortcut === e.key);
         if (tool) handleToolSelect(tool.id);

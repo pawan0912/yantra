@@ -9,6 +9,9 @@ import {
   Clock,
   Terminal,
   Palette,
+  FileType,
+  Regex,
+  GitCompareArrows,
 } from "lucide-react";
 
 export type ToolProps = {
@@ -111,5 +114,41 @@ export const tools: ToolMeta[] = [
     description: "Convert between hex, RGB, and HSL color formats",
     tags: ["color", "hex", "rgb", "hsl", "css", "tailwind", "contrast"],
     matchClipboard: (t) => { const s = t.trim(); return /^#[0-9a-fA-F]{3,8}$/.test(s) || /^rgba?\(/.test(s) || /^hsla?\(/.test(s); },
+  },
+  {
+    id: "json-to-types",
+    name: "JSON → Types",
+    icon: FileType,
+    shortcut: "8",
+    component: lazy(() =>
+      import("./json-to-types/JsonToTypes").then((m) => ({ default: m.JsonToTypes }))
+    ),
+    description: "Generate TypeScript interfaces or Zod schemas from JSON",
+    tags: ["json", "typescript", "zod", "types", "interface", "schema", "codegen"],
+    matchClipboard: (t) => { const s = t.trim(); return s.startsWith("{") || s.startsWith("["); },
+  },
+  {
+    id: "regex",
+    name: "Regex Tester",
+    icon: Regex,
+    shortcut: "9",
+    component: lazy(() =>
+      import("./regex/RegexTester").then((m) => ({ default: m.RegexTester }))
+    ),
+    description: "Test regex patterns with live match highlighting",
+    tags: ["regex", "regexp", "pattern", "match", "test", "replace"],
+    matchClipboard: () => false,
+  },
+  {
+    id: "diff",
+    name: "Diff Viewer",
+    icon: GitCompareArrows,
+    shortcut: "0",
+    component: lazy(() =>
+      import("./diff/DiffViewer").then((m) => ({ default: m.DiffViewer }))
+    ),
+    description: "Compare two texts and see line-by-line differences",
+    tags: ["diff", "compare", "merge", "text", "json", "config"],
+    matchClipboard: () => false,
   },
 ];
