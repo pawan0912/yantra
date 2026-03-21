@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import { tools } from "../../tools/registry";
 import { cn } from "../../lib/utils";
-import { WindowControls } from "./WindowControls";
 
 type AppShellProps = {
   activeToolId: string;
@@ -15,13 +14,11 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, onSettings
   const ActiveComponent = activeTool.component;
 
   return (
-    <div className="flex h-screen rounded-xl overflow-hidden bg-white/80 dark:bg-gray-950/90 backdrop-blur-2xl text-gray-900 dark:text-gray-100 border border-gray-200/40 dark:border-gray-700/40 shadow-lg">
+    <div className="flex h-screen bg-white/80 dark:bg-gray-950/90 backdrop-blur-2xl text-gray-900 dark:text-gray-100">
       {/* Sidebar */}
       <nav className="w-[180px] flex-shrink-0 border-r border-gray-200/60 dark:border-white/[0.06] bg-gray-50/80 dark:bg-white/[0.03] flex flex-col select-none">
-        {/* Drag region + traffic lights */}
-        <div className="flex items-center h-12 gap-3" data-tauri-drag-region>
-          <WindowControls />
-        </div>
+        {/* Spacer for native macOS traffic lights (titleBarStyle: Overlay) */}
+        <div className="h-12 flex-shrink-0" />
 
         {/* Tool list */}
         <div className="flex-1 overflow-y-auto px-2 py-1 space-y-0.5">
@@ -65,9 +62,9 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, onSettings
 
       {/* Main content */}
       <main className="flex-1 min-w-0 min-h-0 flex flex-col">
-        {/* Main drag region / title bar */}
-        <div className="h-12 flex items-center px-4 border-b border-gray-200/60 dark:border-white/[0.06] flex-shrink-0" data-tauri-drag-region>
-          <span className="text-[13px] font-medium text-gray-500 dark:text-gray-400 pointer-events-none" data-tauri-drag-region>
+        {/* Title area — inset for native traffic lights on the sidebar side */}
+        <div className="h-12 flex items-center px-4 border-b border-gray-200/60 dark:border-white/[0.06] flex-shrink-0">
+          <span className="text-[13px] font-medium text-gray-500 dark:text-gray-400">
             {activeTool.name}
           </span>
         </div>

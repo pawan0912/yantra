@@ -3,13 +3,12 @@ use tauri::menu::{Menu, MenuItem};
 use tauri::{Manager, WebviewWindow};
 use tauri_plugin_global_shortcut::GlobalShortcutExt;
 
-fn toggle_window(window: &WebviewWindow) {
-    if window.is_visible().unwrap_or(false) {
-        let _ = window.hide();
-    } else {
-        let _ = window.show();
-        let _ = window.set_focus();
+fn show_and_focus(window: &WebviewWindow) {
+    if window.is_minimized().unwrap_or(false) {
+        let _ = window.unminimize();
     }
+    let _ = window.show();
+    let _ = window.set_focus();
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -23,7 +22,7 @@ pub fn run() {
                 .with_handler(|app, _shortcut, event| {
                     if event.state() == tauri_plugin_global_shortcut::ShortcutState::Pressed {
                         if let Some(window) = app.get_webview_window("main") {
-                            toggle_window(&window);
+                            show_and_focus(&window);
                         }
                     }
                 })
@@ -34,9 +33,9 @@ pub fn run() {
             app.global_shortcut().register("Ctrl+Shift+Space")?;
 
             // Build tray menu
-            let show_hide = MenuItem::with_id(app, "show_hide", "Show/Hide", true, None::<&str>)?;
+            let show = MenuItem::with_id(app, "show", "Show Yantra", true, None::<&str>)?;
             let quit = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
-            let menu = Menu::with_items(app, &[&show_hide, &quit])?;
+            let menu = Menu::with_items(app, &[&show, &quit])?;
 
             // Build tray icon
             TrayIconBuilder::new()
@@ -45,15 +44,14 @@ pub fn run() {
                 .show_menu_on_left_click(false)
                 .on_menu_event(move |app, event| match event.id().as_ref() {
                     "quit" => app.exit(0),
-                    "show_hide" => {
+                    "show" => {
                         if let Some(window) = app.get_webview_window("main") {
-                            toggle_window(&window);
+                            show_and_focus(&window);
                         }
                     }
                     _ => {}
                 })
                 .on_tray_icon_event(|tray, event| {
-                    tauri_plugin_positioner::on_tray_event(tray.app_handle(), &event);
                     if let TrayIconEvent::Click {
                         button: MouseButton::Left,
                         button_state: MouseButtonState::Up,
@@ -62,7 +60,7 @@ pub fn run() {
                     {
                         let app = tray.app_handle();
                         if let Some(window) = app.get_webview_window("main") {
-                            toggle_window(&window);
+                            show_and_focus(&window);
                         }
                     }
                 })
