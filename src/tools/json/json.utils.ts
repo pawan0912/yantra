@@ -46,28 +46,22 @@ export function getJsonMeta({ input }: { input: string }): JsonMeta {
 }
 
 export function highlightJson({ json }: { json: string }): string {
-  return json
+  // Tokenize and highlight in a single pass to avoid regex interference
+  const escaped = json
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(
-      /("(?:\\.|[^"\\])*")\s*:/g,
-      '<span style="font-weight:600">$1</span>:'
-    )
-    .replace(
-      /:\s*("(?:\\.|[^"\\])*")/g,
-      ': <span style="color:#16a34a">$1</span>'
-    )
-    .replace(
-      /:\s*(\d+\.?\d*)/g,
-      ': <span style="color:#2563eb">$1</span>'
-    )
-    .replace(
-      /:\s*(true|false)/g,
-      ': <span style="color:#ea580c">$1</span>'
-    )
-    .replace(
-      /:\s*(null)/g,
-      ': <span style="color:#9ca3af">$1</span>'
-    );
+    .replace(/>/g, "&gt;");
+
+  // Single-pass regex that matches JSON tokens in order of priority
+  return escaped.replace(
+    /("(?:\\.|[^"\\])*")\s*:|("(?:\\.|[^"\\])*")|\b(\d+\.?\d*(?:[eE][+-]?\d+)?)\b|\b(true|false)\b|\b(null)\b/g,
+    (match, key?: string, str?: string, num?: string, bool?: string, nil?: string) => {
+      if (key) return `<span style="font-weight:600">${key}</span>:`;
+      if (str) return `<span style="color:#16a34a">${str}</span>`;
+      if (num) return `<span style="color:#2563eb">${num}</span>`;
+      if (bool) return `<span style="color:#ea580c">${bool}</span>`;
+      if (nil) return `<span style="color:#9ca3af">${nil}</span>`;
+      return match;
+    }
+  );
 }

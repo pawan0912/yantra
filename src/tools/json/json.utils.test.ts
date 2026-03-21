@@ -123,8 +123,7 @@ describe("getJsonMeta", () => {
 describe("highlightJson", () => {
   it("wraps keys in bold spans", () => {
     const result = highlightJson({ json: '"name": "value"' });
-    expect(result).toContain('"name"</span>');
-    expect(result).toContain("font-weight");
+    expect(result).toContain('<span style="font-weight:600">"name"</span>');
   });
 
   it("wraps string values in green spans", () => {
