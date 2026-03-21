@@ -1,51 +1,58 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
+import { useState, useEffect, useCallback } from "react";
+import { AppShell } from "./components/layout/AppShell";
+import { CommandPalette } from "./components/layout/CommandPalette";
+import { tools } from "./tools/registry";
+import { useClipboard } from "./hooks/useClipboard";
 import "./App.css";
 
-function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+export function App(): React.ReactElement {
+  const [activeToolId, setActiveToolId] = useState(tools[0].id);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const { clipboardText, refresh } = useClipboard();
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
-  }
+  useEffect(() => {
+    const handleFocus = (): void => {
+      refresh();
+    };
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, [refresh]);
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent): void => {
+      if (e.metaKey && e.key === "k") {
+        e.preventDefault();
+        setPaletteOpen((open) => !open);
+        return;
+      }
+
+      if (e.metaKey && e.key >= "1" && e.key <= "9") {
+        e.preventDefault();
+        const tool = tools.find((t) => t.shortcut === e.key);
+        if (tool) setActiveToolId(tool.id);
+        return;
+      }
+
+      if (e.key === "Escape" && paletteOpen) {
+        setPaletteOpen(false);
+      }
+    },
+    [paletteOpen]
+  );
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
 
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
+    <>
+      <AppShell activeToolId={activeToolId} onToolSelect={setActiveToolId} clipboardText={clipboardText} />
+      <CommandPalette
+        isOpen={paletteOpen}
+        onClose={() => setPaletteOpen(false)}
+        onSelect={setActiveToolId}
+      />
+    </>
   );
 }
-
-export default App;
