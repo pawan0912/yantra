@@ -13,9 +13,7 @@
   text-rendering: optimizeLegibility;
 }
 
-/* Transparent body for rounded window */
 html, body {
-  background: transparent;
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -96,15 +94,4 @@ html, body {
 /* Prevent text selection on UI elements */
 button, nav, kbd {
   user-select: none;
-}
-
-/* Smooth transitions for theme switching */
-* {
-  transition-property: background-color, border-color, color;
-  transition-duration: 0ms;
-}
-
-/* Only animate theme changes, not everything */
-.theme-transition * {
-  transition-duration: 200ms;
 }

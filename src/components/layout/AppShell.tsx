@@ -79,7 +79,7 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettin
       <main className="flex-1 min-w-0 min-h-0 flex flex-col">
         {/* Title bar — draggable */}
         <div className="h-12 flex items-center px-4 border-b border-gray-200/60 dark:border-white/[0.06] flex-shrink-0" data-tauri-drag-region>
-          <span className="text-[13px] font-medium text-gray-500 dark:text-gray-400 pointer-events-none" data-tauri-drag-region>
+          <span className="text-[13px] font-medium text-gray-500 dark:text-gray-400 pointer-events-none">
             {titleText}
           </span>
         </div>
