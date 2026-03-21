@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { ClipboardPaste } from "lucide-react";
+import { ClipboardPaste, FlaskConical, X } from "lucide-react";
 import { CopyButton } from "./CopyButton";
 import { cn } from "../../lib/utils";
 import { Button, Textarea, PaneHeader } from "../ui";
@@ -21,6 +21,7 @@ type ToolPaneProps = {
   placeholder?: string;
   clipboardText?: string;
   clipboardMatch?: boolean;
+  sampleData?: string;
 };
 
 function PasteIcon({ match, onClick }: { match: boolean; onClick: () => void }): React.ReactElement {
@@ -52,6 +53,7 @@ export function ToolPane({
   placeholder = "Paste or type here...",
   clipboardText = "",
   clipboardMatch = false,
+  sampleData,
 }: ToolPaneProps): React.ReactElement {
   const [pasted, setPasted] = useState(false);
   const [splitPercent, setSplitPercent] = useState(50);
@@ -110,6 +112,26 @@ export function ToolPane({
             {action.label}
           </Button>
         ))}
+        <div className="ml-auto flex items-center gap-1">
+          {sampleData && (
+            <button
+              onClick={() => onInputChange(sampleData)}
+              title="Load sample data"
+              className="p-1 rounded-md text-gray-400/60 dark:text-gray-500/60 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-white/[0.06] transition-all duration-150"
+            >
+              <FlaskConical className="w-3.5 h-3.5" strokeWidth={1.8} />
+            </button>
+          )}
+          {inputValue && (
+            <button
+              onClick={() => onInputChange("")}
+              title="Clear input"
+              className="p-1 rounded-md text-gray-400/60 dark:text-gray-500/60 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-white/[0.06] transition-all duration-150"
+            >
+              <X className="w-3.5 h-3.5" strokeWidth={1.8} />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Split pane — resizable */}

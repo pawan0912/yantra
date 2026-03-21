@@ -6,6 +6,8 @@ import { decodeJwt, getExpiry, getAlgorithm } from "./jwt.utils";
 import { highlightJson } from "../json/json.utils";
 import type { ToolProps } from "../registry";
 
+const SAMPLE_DATA = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE5MTYyMzkwMjJ9.4S2sL4Hk_RKhp3oK5cE3MFg6_lNxlFvKBVDlH8a9MJc";
+
 const TABS = ["Header", "Payload", "Info"] as const;
 
 export function JwtDecoder({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
@@ -97,6 +99,7 @@ export function JwtDecoder({ clipboardText, clipboardMatch }: ToolProps): React.
       onInputChange={setInput}
       outputValue={outputText}
       outputElement={outputElement}
+      sampleData={SAMPLE_DATA}
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
       placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0..."

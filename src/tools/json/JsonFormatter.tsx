@@ -3,6 +3,8 @@ import { ToolPane } from "../../components/layout/ToolPane";
 import { formatJson, minifyJson, validateJson, getJsonMeta, highlightJson } from "./json.utils";
 import type { ToolProps } from "../registry";
 
+const SAMPLE_DATA = '{"name": "John Doe", "age": 30, "email": "john@example.com", "address": {"city": "San Francisco", "state": "CA"}, "hobbies": ["coding", "hiking", "photography"]}';
+
 export function JsonFormatter({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
@@ -50,6 +52,7 @@ export function JsonFormatter({ clipboardText, clipboardMatch }: ToolProps): Rea
       inputValue={input}
       onInputChange={setInput}
       outputValue={output}
+      sampleData={SAMPLE_DATA}
       outputElement={
         highlighted ? (
           <pre

@@ -7,6 +7,8 @@ import type { ToolProps } from "../registry";
 type Mode = "encode" | "decode";
 type Variant = "standard" | "urlsafe";
 
+const SAMPLE_DATA = "Hello, World! This is a sample text for Base64 encoding. \u{1F680}";
+
 export function Base64Tool({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<Mode>("encode");
@@ -86,6 +88,7 @@ export function Base64Tool({ clipboardText, clipboardMatch }: ToolProps): React.
       onInputChange={setInput}
       outputValue={output}
       outputElement={outputElement}
+      sampleData={SAMPLE_DATA}
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
       placeholder="Hello, World! or SGVsbG8sIFdvcmxkIQ=="

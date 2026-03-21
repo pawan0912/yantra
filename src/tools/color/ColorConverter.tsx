@@ -21,6 +21,8 @@ function CopyIndicator({ text }: { text: string }): React.ReactElement {
   );
 }
 
+const SAMPLE_DATA = "#3b82f6";
+
 export function ColorConverter({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
   const [input, setInput] = useState("");
 
@@ -91,6 +93,7 @@ export function ColorConverter({ clipboardText, clipboardMatch }: ToolProps): Re
       onInputChange={setInput}
       outputValue={color ? color.formats.hex : ""}
       outputElement={outputElement}
+      sampleData={SAMPLE_DATA}
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
       placeholder="#1D9E75 or rgb(29, 158, 117) or hsl(161, 69%, 37%)"

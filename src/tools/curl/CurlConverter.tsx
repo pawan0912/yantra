@@ -14,6 +14,11 @@ const generators: Record<
   reactQuery: toReactQuery,
 };
 
+const SAMPLE_DATA = `curl -X POST https://api.example.com/users \\
+  -H "Content-Type: application/json" \\
+  -H "Authorization: Bearer token123" \\
+  -d '{"name": "John", "email": "john@example.com"}'`;
+
 export function CurlConverter({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
   const [input, setInput] = useState("");
   const [format, setFormat] = useState<OutputFormat>("fetch");
@@ -57,6 +62,7 @@ export function CurlConverter({ clipboardText, clipboardMatch }: ToolProps): Rea
       inputValue={input}
       onInputChange={setInput}
       outputValue={output}
+      sampleData={SAMPLE_DATA}
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
       outputElement={

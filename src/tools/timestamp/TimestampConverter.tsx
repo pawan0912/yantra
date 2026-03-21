@@ -29,6 +29,8 @@ function OutputRow({ label, value }: { label: string; value: string }): React.Re
   );
 }
 
+const SAMPLE_DATA = "1711036800";
+
 export function TimestampConverter({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
   const [input, setInput] = useState("");
 
@@ -85,6 +87,7 @@ export function TimestampConverter({ clipboardText, clipboardMatch }: ToolProps)
       onInputChange={setInput}
       outputValue={outputValue}
       outputElement={outputElement}
+      sampleData={SAMPLE_DATA}
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
       placeholder="1711234567 or 2024-03-23T15:30:00Z"

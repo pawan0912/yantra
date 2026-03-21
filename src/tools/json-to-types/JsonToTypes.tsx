@@ -5,6 +5,8 @@ import type { ToolProps } from "../registry";
 
 type OutputMode = "typescript" | "zod";
 
+const SAMPLE_DATA = '{"id": 1, "name": "John Doe", "email": "john@example.com", "isActive": true, "roles": ["admin", "user"], "profile": {"avatar": "https://example.com/avatar.png", "bio": null}}';
+
 export function JsonToTypes({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<OutputMode>("typescript");
@@ -34,6 +36,7 @@ export function JsonToTypes({ clipboardText, clipboardMatch }: ToolProps): React
       inputValue={input}
       onInputChange={setInput}
       outputValue={result.output}
+      sampleData={SAMPLE_DATA}
       outputElement={
         result.output ? (
           <pre className="text-sm font-mono whitespace-pre-wrap break-words text-gray-800 dark:text-gray-200">

@@ -3,6 +3,8 @@ import { ToolPane } from "../../components/layout/ToolPane";
 import { parseUrl, encodeUrlString, decodeUrlString } from "./url.utils";
 import type { ToolProps } from "../registry";
 
+const SAMPLE_DATA = "https://api.example.com/v2/users?page=1&limit=25&sort=name&filter=active#results";
+
 export function UrlParser({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<"parse" | "encode" | "decode">("parse");
@@ -41,6 +43,7 @@ export function UrlParser({ clipboardText, clipboardMatch }: ToolProps): React.R
       onInputChange={setInput}
       outputValue={outputValue}
       outputElement={outputElement}
+      sampleData={SAMPLE_DATA}
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
       placeholder="https://api.example.com/users?page=1&sort=name"
