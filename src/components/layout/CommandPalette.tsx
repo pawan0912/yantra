@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
+import { Search } from "lucide-react";
 import { tools } from "../../tools/registry";
 import { cn } from "../../lib/utils";
 
@@ -72,9 +73,7 @@ export function CommandPalette({ isOpen, onClose, onSelect }: CommandPaletteProp
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-2 px-4 border-b border-gray-200/50 dark:border-gray-700/50">
-          <svg className="w-4 h-4 text-gray-400 dark:text-gray-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+          <Search className="w-4 h-4 text-gray-400 dark:text-gray-500 flex-shrink-0" strokeWidth={2} />
           <input
             ref={inputRef}
             type="text"

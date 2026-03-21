@@ -1,5 +1,5 @@
 import { Suspense, useState } from "react";
-import { Settings } from "lucide-react";
+import { Settings, PanelLeft } from "lucide-react";
 import { tools } from "../../tools/registry";
 import { cn } from "../../lib/utils";
 import { SettingsScreen } from "./SettingsPanel";
@@ -13,12 +13,7 @@ type AppShellProps = {
 };
 
 function SidebarIcon(): React.ReactElement {
-  return (
-    <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.4}>
-      <rect x="3" y="3" width="18" height="18" rx="3" />
-      <line x1="9" y1="3" x2="9" y2="21" />
-    </svg>
-  );
+  return <PanelLeft className="w-[18px] h-[18px]" strokeWidth={1.5} />;
 }
 
 export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettings, onSettingsToggle }: AppShellProps): React.ReactElement {
