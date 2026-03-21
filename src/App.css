@@ -87,6 +87,12 @@ html, body {
   background: rgba(59, 130, 246, 0.2);
 }
 
+/* Tauri drag region — required for data-tauri-drag-region to work */
+[data-tauri-drag-region] {
+  -webkit-app-region: drag;
+  app-region: drag;
+}
+
 /* Prevent text selection on UI elements */
 button, nav, kbd {
   user-select: none;
