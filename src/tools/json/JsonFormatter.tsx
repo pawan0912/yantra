@@ -1,26 +1,11 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo } from "react";
 import { ToolPane } from "../../components/layout/ToolPane";
 import { formatJson, minifyJson, validateJson, getJsonMeta, highlightJson } from "./json.utils";
 import type { ToolProps } from "../registry";
 
-export function JsonFormatter({ clipboardText }: ToolProps): React.ReactElement {
+export function JsonFormatter({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
-  const hasUserTyped = useRef(false);
-
-  useEffect(() => {
-    if (clipboardText && !hasUserTyped.current && !input) {
-      const trimmed = clipboardText.trim();
-      if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
-        setInput(clipboardText);
-      }
-    }
-  }, [clipboardText, input]);
-
-  const handleInputChange = (value: string): void => {
-    hasUserTyped.current = true;
-    setInput(value);
-  };
 
   const validation = useMemo(() => {
     if (!input.trim()) return null;
@@ -63,7 +48,7 @@ export function JsonFormatter({ clipboardText }: ToolProps): React.ReactElement 
   return (
     <ToolPane
       inputValue={input}
-      onInputChange={handleInputChange}
+      onInputChange={setInput}
       outputValue={output}
       outputElement={
         highlighted ? (
@@ -74,6 +59,8 @@ export function JsonFormatter({ clipboardText }: ToolProps): React.ReactElement 
         ) : undefined
       }
       placeholder='{"name": "value", "count": 42}'
+      clipboardText={clipboardText}
+      clipboardMatch={clipboardMatch}
       actions={[
         { label: "Format", onClick: handleFormat },
         { label: "Minify", onClick: handleMinify },

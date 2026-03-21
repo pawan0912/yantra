@@ -1,26 +1,11 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo } from "react";
 import { ToolPane } from "../../components/layout/ToolPane";
 import { parseUrl, encodeUrlString, decodeUrlString } from "./url.utils";
 import type { ToolProps } from "../registry";
 
-export function UrlParser({ clipboardText }: ToolProps): React.ReactElement {
+export function UrlParser({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<"parse" | "encode" | "decode">("parse");
-  const hasUserTyped = useRef(false);
-
-  useEffect(() => {
-    if (clipboardText && !hasUserTyped.current && !input) {
-      const trimmed = clipboardText.trim();
-      if (/^https?:\/\//.test(trimmed) || /^\w+:\/\//.test(trimmed) || trimmed.includes("?") || trimmed.includes("%")) {
-        setInput(clipboardText);
-      }
-    }
-  }, [clipboardText, input]);
-
-  const handleInputChange = (value: string): void => {
-    hasUserTyped.current = true;
-    setInput(value);
-  };
 
   const parsed = useMemo(() => {
     if (!input.trim() || mode !== "parse") return null;
@@ -53,9 +38,11 @@ export function UrlParser({ clipboardText }: ToolProps): React.ReactElement {
   return (
     <ToolPane
       inputValue={input}
-      onInputChange={handleInputChange}
+      onInputChange={setInput}
       outputValue={outputValue}
       outputElement={outputElement}
+      clipboardText={clipboardText}
+      clipboardMatch={clipboardMatch}
       placeholder="https://api.example.com/users?page=1&sort=name"
       actions={[
         { label: "Parse", onClick: () => setMode("parse"), active: mode === "parse" },

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo } from "react";
 import { ToolPane } from "../../components/layout/ToolPane";
 import {
   parseTimestamp,
@@ -29,23 +29,8 @@ function OutputRow({ label, value }: { label: string; value: string }): React.Re
   );
 }
 
-export function TimestampConverter({ clipboardText }: ToolProps): React.ReactElement {
+export function TimestampConverter({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
   const [input, setInput] = useState("");
-  const hasUserTyped = useRef(false);
-
-  useEffect(() => {
-    if (clipboardText && !hasUserTyped.current && !input) {
-      const trimmed = clipboardText.trim();
-      if (/^\d{10,13}$/.test(trimmed) || /^\d{4}-\d{2}-\d{2}/.test(trimmed)) {
-        setInput(clipboardText);
-      }
-    }
-  }, [clipboardText, input]);
-
-  const handleInputChange = (value: string): void => {
-    hasUserTyped.current = true;
-    setInput(value);
-  };
 
   const result = useMemo((): { formats: AllFormats; detected: TimestampFormat } | { error: string } | null => {
     const trimmed = input.trim();
@@ -75,7 +60,6 @@ export function TimestampConverter({ clipboardText }: ToolProps): React.ReactEle
   const error = result && "error" in result ? result.error : undefined;
 
   const handleNow = (): void => {
-    hasUserTyped.current = true;
     setInput(String(Date.now()));
   };
 
@@ -98,9 +82,11 @@ export function TimestampConverter({ clipboardText }: ToolProps): React.ReactEle
   return (
     <ToolPane
       inputValue={input}
-      onInputChange={handleInputChange}
+      onInputChange={setInput}
       outputValue={outputValue}
       outputElement={outputElement}
+      clipboardText={clipboardText}
+      clipboardMatch={clipboardMatch}
       placeholder="1711234567 or 2024-03-23T15:30:00Z"
       actions={[
         { label: "Convert", onClick: handleConvert },

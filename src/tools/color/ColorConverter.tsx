@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo } from "react";
 import { ToolPane } from "../../components/layout/ToolPane";
 import { parseColor, getAllFormats, detectColorFormat, toHex } from "./color.utils";
 import type { ToolProps } from "../registry";
@@ -21,23 +21,8 @@ function CopyIndicator({ text }: { text: string }): React.ReactElement {
   );
 }
 
-export function ColorConverter({ clipboardText }: ToolProps): React.ReactElement {
+export function ColorConverter({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
   const [input, setInput] = useState("");
-  const hasUserTyped = useRef(false);
-
-  useEffect(() => {
-    if (clipboardText && !hasUserTyped.current && !input) {
-      const trimmed = clipboardText.trim();
-      if (/^#[0-9a-fA-F]{3,8}$/.test(trimmed) || /^rgba?\(/.test(trimmed) || /^hsla?\(/.test(trimmed)) {
-        setInput(clipboardText);
-      }
-    }
-  }, [clipboardText, input]);
-
-  const handleInputChange = (value: string): void => {
-    hasUserTyped.current = true;
-    setInput(value);
-  };
 
   const parsed = useMemo(() => {
     if (!input.trim()) return null;
@@ -103,9 +88,11 @@ export function ColorConverter({ clipboardText }: ToolProps): React.ReactElement
   return (
     <ToolPane
       inputValue={input}
-      onInputChange={handleInputChange}
+      onInputChange={setInput}
       outputValue={color ? color.formats.hex : ""}
       outputElement={outputElement}
+      clipboardText={clipboardText}
+      clipboardMatch={clipboardMatch}
       placeholder="#1D9E75 or rgb(29, 158, 117) or hsl(161, 69%, 37%)"
       actions={[{ label: "Parse", onClick: () => setInput(input) }]}
       meta={meta}

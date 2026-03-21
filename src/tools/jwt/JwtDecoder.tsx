@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo } from "react";
 import { ToolPane } from "../../components/layout/ToolPane";
 import { TabBar } from "../../components/ui/TabBar";
 import { Badge } from "../../components/ui/Badge";
@@ -8,24 +8,9 @@ import type { ToolProps } from "../registry";
 
 const TABS = ["Header", "Payload", "Info"] as const;
 
-export function JwtDecoder({ clipboardText }: ToolProps): React.ReactElement {
+export function JwtDecoder({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
   const [input, setInput] = useState("");
   const [activeTab, setActiveTab] = useState<string>("Header");
-  const hasUserTyped = useRef(false);
-
-  useEffect(() => {
-    if (clipboardText && !hasUserTyped.current && !input) {
-      const trimmed = clipboardText.trim();
-      if (trimmed.split(".").length === 3 && trimmed.startsWith("ey")) {
-        setInput(clipboardText);
-      }
-    }
-  }, [clipboardText, input]);
-
-  const handleInputChange = (value: string): void => {
-    hasUserTyped.current = true;
-    setInput(value);
-  };
 
   const decoded = useMemo(() => {
     if (!input.trim()) return null;
@@ -109,9 +94,11 @@ export function JwtDecoder({ clipboardText }: ToolProps): React.ReactElement {
   return (
     <ToolPane
       inputValue={input}
-      onInputChange={handleInputChange}
+      onInputChange={setInput}
       outputValue={outputText}
       outputElement={outputElement}
+      clipboardText={clipboardText}
+      clipboardMatch={clipboardMatch}
       placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0..."
       actions={[]}
       error={error}

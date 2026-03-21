@@ -96,7 +96,7 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettin
                 </div>
               }
             >
-              <ActiveComponent clipboardText={clipboardText} />
+              <ActiveComponent clipboardText={clipboardText} clipboardMatch={activeTool.matchClipboard(clipboardText)} />
             </Suspense>
           )}
         </div>

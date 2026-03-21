@@ -3,6 +3,7 @@ import type { ComponentType, LazyExoticComponent } from "react";
 
 export type ToolProps = {
   clipboardText: string;
+  clipboardMatch: boolean;
 };
 
 export type ToolMeta = {
@@ -13,6 +14,7 @@ export type ToolMeta = {
   component: LazyExoticComponent<ComponentType<ToolProps>>;
   description: string;
   tags: string[];
+  matchClipboard: (text: string) => boolean;
 };
 
 export const tools: ToolMeta[] = [
@@ -26,6 +28,7 @@ export const tools: ToolMeta[] = [
     ),
     description: "Format, minify, and validate JSON",
     tags: ["json", "format", "minify", "validate", "pretty"],
+    matchClipboard: (t) => { const s = t.trim(); return s.startsWith("{") || s.startsWith("["); },
   },
   {
     id: "jwt",
@@ -37,6 +40,7 @@ export const tools: ToolMeta[] = [
     ),
     description: "Decode and inspect JWT tokens",
     tags: ["jwt", "token", "decode", "auth", "bearer"],
+    matchClipboard: (t) => { const s = t.trim(); return s.split(".").length === 3 && s.startsWith("ey"); },
   },
   {
     id: "base64",
@@ -48,6 +52,7 @@ export const tools: ToolMeta[] = [
     ),
     description: "Encode and decode Base64 strings",
     tags: ["base64", "encode", "decode", "binary"],
+    matchClipboard: () => false,
   },
   {
     id: "url",
@@ -59,6 +64,7 @@ export const tools: ToolMeta[] = [
     ),
     description: "Parse, encode, and decode URLs",
     tags: ["url", "encode", "decode", "query", "params", "uri", "deeplink"],
+    matchClipboard: (t) => /^https?:\/\//.test(t.trim()) || /^\w+:\/\//.test(t.trim()),
   },
   {
     id: "timestamp",
@@ -70,6 +76,7 @@ export const tools: ToolMeta[] = [
     ),
     description: "Convert between timestamp formats",
     tags: ["timestamp", "unix", "epoch", "date", "time", "iso"],
+    matchClipboard: (t) => { const s = t.trim(); return /^\d{10,13}$/.test(s) || /^\d{4}-\d{2}-\d{2}/.test(s); },
   },
   {
     id: "curl",
@@ -81,6 +88,7 @@ export const tools: ToolMeta[] = [
     ),
     description: "Convert cURL commands to fetch, axios, or React Query",
     tags: ["curl", "fetch", "axios", "http", "api", "request", "react-query"],
+    matchClipboard: (t) => t.trim().toLowerCase().startsWith("curl"),
   },
   {
     id: "color",
@@ -92,5 +100,6 @@ export const tools: ToolMeta[] = [
     ),
     description: "Convert between hex, RGB, and HSL color formats",
     tags: ["color", "hex", "rgb", "hsl", "css", "tailwind", "contrast"],
+    matchClipboard: (t) => { const s = t.trim(); return /^#[0-9a-fA-F]{3,8}$/.test(s) || /^rgba?\(/.test(s) || /^hsla?\(/.test(s); },
   },
 ];

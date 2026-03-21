@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ToolPane } from "../../components/layout/ToolPane";
 import { Toggle } from "../../components/ui/Toggle";
 import { encode, decode, isBase64Image, looksLikeBase64 } from "./base64.utils";
@@ -7,26 +7,11 @@ import type { ToolProps } from "../registry";
 type Mode = "encode" | "decode";
 type Variant = "standard" | "urlsafe";
 
-export function Base64Tool({ clipboardText }: ToolProps): React.ReactElement {
+export function Base64Tool({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<Mode>("encode");
   const [variant, setVariant] = useState<Variant>("standard");
   const [userSetMode, setUserSetMode] = useState(false);
-  const hasUserTyped = useRef(false);
-
-  useEffect(() => {
-    if (clipboardText && !hasUserTyped.current && !input) {
-      const trimmed = clipboardText.trim();
-      if (/^[A-Za-z0-9+/=_-]{4,}$/.test(trimmed) || trimmed.startsWith("data:")) {
-        setInput(clipboardText);
-      }
-    }
-  }, [clipboardText, input]);
-
-  const handleInputChange = (value: string): void => {
-    hasUserTyped.current = true;
-    setInput(value);
-  };
 
   useEffect(() => {
     if (!userSetMode && input && looksLikeBase64({ input })) {
@@ -98,9 +83,11 @@ export function Base64Tool({ clipboardText }: ToolProps): React.ReactElement {
   return (
     <ToolPane
       inputValue={input}
-      onInputChange={handleInputChange}
+      onInputChange={setInput}
       outputValue={output}
       outputElement={outputElement}
+      clipboardText={clipboardText}
+      clipboardMatch={clipboardMatch}
       placeholder="Hello, World! or SGVsbG8sIFdvcmxkIQ=="
       actions={[]}
       error={error}
