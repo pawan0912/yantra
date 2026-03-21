@@ -98,6 +98,7 @@ export function TimestampConverter({ clipboardText }: ToolProps): React.ReactEle
       onInputChange={handleInputChange}
       outputValue={outputValue}
       outputElement={outputElement}
+      placeholder="1711234567 or 2024-03-23T15:30:00Z"
       actions={[
         { label: "Convert", onClick: handleConvert },
         { label: "Now", onClick: handleNow },

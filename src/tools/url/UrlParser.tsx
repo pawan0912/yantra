@@ -53,6 +53,7 @@ export function UrlParser({ clipboardText }: ToolProps): React.ReactElement {
       onInputChange={handleInputChange}
       outputValue={outputValue}
       outputElement={outputElement}
+      placeholder="https://api.example.com/users?page=1&sort=name"
       actions={[
         { label: "Parse", onClick: () => setMode("parse"), active: mode === "parse" },
         { label: "Encode", onClick: () => setMode("encode"), active: mode === "encode" },

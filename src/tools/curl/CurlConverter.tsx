@@ -77,6 +77,7 @@ export function CurlConverter({ clipboardText }: ToolProps): React.ReactElement 
           />
         ) : undefined
       }
+      placeholder={'curl -X GET https://api.example.com/users \\\n  -H "Authorization: Bearer token"'}
       actions={actions}
       meta={meta}
       error={error}

@@ -15,6 +15,7 @@ type ToolPaneProps = {
   actions: ToolAction[];
   meta?: string;
   error?: string;
+  placeholder?: string;
 };
 
 export function ToolPane({
@@ -25,6 +26,7 @@ export function ToolPane({
   actions,
   meta,
   error,
+  placeholder = "Paste or type here...",
 }: ToolPaneProps): React.ReactElement {
   return (
     <div className="flex flex-col h-full">
@@ -64,7 +66,7 @@ export function ToolPane({
             className="flex-1 p-3 bg-transparent text-[13px] font-mono leading-relaxed text-gray-800 dark:text-gray-200
                        resize-none focus:outline-none placeholder-gray-400/60 dark:placeholder-gray-600/60
                        selection:bg-blue-500/20"
-            placeholder="Paste or type here..."
+            placeholder={placeholder}
             spellCheck={false}
           />
         </div>

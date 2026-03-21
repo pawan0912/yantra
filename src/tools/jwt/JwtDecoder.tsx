@@ -109,6 +109,7 @@ export function JwtDecoder({ clipboardText }: ToolProps): React.ReactElement {
       onInputChange={handleInputChange}
       outputValue={outputText}
       outputElement={outputElement}
+      placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0..."
       actions={[]}
       error={error}
     />

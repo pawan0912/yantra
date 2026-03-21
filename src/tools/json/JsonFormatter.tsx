@@ -70,6 +70,7 @@ export function JsonFormatter({ clipboardText }: ToolProps): React.ReactElement 
           />
         ) : undefined
       }
+      placeholder='{"name": "value", "count": 42}'
       actions={[
         { label: "Format", onClick: handleFormat },
         { label: "Minify", onClick: handleMinify },

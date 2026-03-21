@@ -98,6 +98,7 @@ export function Base64Tool({ clipboardText }: ToolProps): React.ReactElement {
       onInputChange={handleInputChange}
       outputValue={output}
       outputElement={outputElement}
+      placeholder="Hello, World! or SGVsbG8sIFdvcmxkIQ=="
       actions={[]}
       error={error}
     />
