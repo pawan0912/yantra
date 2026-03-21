@@ -1,6 +1,6 @@
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
-use tauri::menu::{Menu, MenuItem};
-use tauri::{Manager, WebviewWindow};
+use tauri::menu::{MenuBuilder, MenuItem, SubmenuBuilder, PredefinedMenuItem};
+use tauri::{Emitter, Manager, WebviewWindow};
 use tauri_plugin_global_shortcut::GlobalShortcutExt;
 
 fn show_and_focus(window: &WebviewWindow) {
@@ -32,15 +32,62 @@ pub fn run() {
             // Register global hotkey
             app.global_shortcut().register("Ctrl+Shift+Space")?;
 
-            // Build tray menu
-            let show = MenuItem::with_id(app, "show", "Show Yantra", true, None::<&str>)?;
-            let quit = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
-            let menu = Menu::with_items(app, &[&show, &quit])?;
+            // ── App menu bar ──
+            let settings_item = MenuItem::with_id(
+                app, "settings", "Settings", true, Some("CmdOrCtrl+,"),
+            )?;
 
-            // Build tray icon
+            let app_submenu = SubmenuBuilder::new(app, "Yantra")
+                .item(&PredefinedMenuItem::about(app, Some("About Yantra"), None)?)
+                .separator()
+                .item(&settings_item)
+                .separator()
+                .item(&PredefinedMenuItem::services(app, None)?)
+                .separator()
+                .item(&PredefinedMenuItem::hide(app, None)?)
+                .item(&PredefinedMenuItem::hide_others(app, None)?)
+                .item(&PredefinedMenuItem::show_all(app, None)?)
+                .separator()
+                .item(&PredefinedMenuItem::quit(app, None)?)
+                .build()?;
+
+            let edit_submenu = SubmenuBuilder::new(app, "Edit")
+                .undo()
+                .redo()
+                .separator()
+                .cut()
+                .copy()
+                .paste()
+                .select_all()
+                .build()?;
+
+            let window_submenu = SubmenuBuilder::new(app, "Window")
+                .minimize()
+                .separator()
+                .close_window()
+                .build()?;
+
+            let menu = MenuBuilder::new(app)
+                .items(&[&app_submenu, &edit_submenu, &window_submenu])
+                .build()?;
+
+            app.set_menu(menu)?;
+
+            // Handle app menu events
+            app.on_menu_event(move |app_handle, event| {
+                if event.id().0.as_str() == "settings" {
+                    let _ = app_handle.emit("menu-settings", ());
+                }
+            });
+
+            // ── Tray icon ──
+            let tray_show = MenuItem::with_id(app, "show", "Show Yantra", true, None::<&str>)?;
+            let tray_quit = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
+            let tray_menu = tauri::menu::Menu::with_items(app, &[&tray_show, &tray_quit])?;
+
             TrayIconBuilder::new()
                 .icon(app.default_window_icon().unwrap().clone())
-                .menu(&menu)
+                .menu(&tray_menu)
                 .show_menu_on_left_click(false)
                 .on_menu_event(move |app, event| match event.id().as_ref() {
                     "quit" => app.exit(0),

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { listen } from "@tauri-apps/api/event";
 import { AppShell } from "./components/layout/AppShell";
 import { CommandPalette } from "./components/layout/CommandPalette";
 import { tools } from "./tools/registry";
@@ -23,6 +24,17 @@ export function App(): React.ReactElement {
     return () => window.removeEventListener("focus", handleFocus);
   }, [refresh]);
 
+  // Listen for Settings triggered from native app menu (Yantra > Settings / Cmd+,)
+  useEffect(() => {
+    let unlisten: (() => void) | undefined;
+    listen("menu-settings", () => {
+      setShowSettings(true);
+    }).then((fn) => {
+      unlisten = fn;
+    });
+    return () => unlisten?.();
+  }, []);
+
   // When selecting a tool, exit settings view
   const handleToolSelect = useCallback((toolId: string): void => {
     setActiveToolId(toolId);
@@ -34,12 +46,6 @@ export function App(): React.ReactElement {
       if (e.metaKey && e.key === "k") {
         e.preventDefault();
         setPaletteOpen((open) => !open);
-        return;
-      }
-
-      if (e.metaKey && e.key === ",") {
-        e.preventDefault();
-        setShowSettings((open) => !open);
         return;
       }
 
