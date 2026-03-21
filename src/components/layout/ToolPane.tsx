@@ -110,9 +110,6 @@ export function ToolPane({
             {action.label}
           </Button>
         ))}
-        <div className="ml-auto">
-          <CopyButton text={outputValue} />
-        </div>
       </div>
 
       {/* Split pane — resizable */}
@@ -137,7 +134,9 @@ export function ToolPane({
 
         {/* Output */}
         <div className="flex flex-col min-h-0 min-w-0 flex-1">
-          <PaneHeader label="Output" />
+          <PaneHeader label="Output">
+            {outputValue && <CopyButton text={outputValue} />}
+          </PaneHeader>
           <div className="flex-1 overflow-auto p-3">
             {outputElement ?? (
               <pre className="text-[13px] font-mono leading-relaxed text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-words">
