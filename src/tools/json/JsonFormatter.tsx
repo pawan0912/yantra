@@ -64,6 +64,7 @@ export function JsonFormatter({ clipboardText, clipboardMatch }: ToolProps): Rea
       placeholder='{"name": "value", "count": 42}'
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
+      onClear={() => setOutput("")}
       actions={[
         { label: "Format", onClick: handleFormat },
         { label: "Minify", onClick: handleMinify },

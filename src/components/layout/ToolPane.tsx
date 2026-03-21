@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { ClipboardPaste, FlaskConical, X } from "lucide-react";
+import { ClipboardPaste } from "lucide-react";
 import { CopyButton } from "./CopyButton";
 import { cn } from "../../lib/utils";
 import { Button, Textarea, PaneHeader } from "../ui";
@@ -22,6 +22,7 @@ type ToolPaneProps = {
   clipboardText?: string;
   clipboardMatch?: boolean;
   sampleData?: string;
+  onClear?: () => void;
 };
 
 function PasteIcon({ match, onClick }: { match: boolean; onClick: () => void }): React.ReactElement {
@@ -54,6 +55,7 @@ export function ToolPane({
   clipboardText = "",
   clipboardMatch = false,
   sampleData,
+  onClear,
 }: ToolPaneProps): React.ReactElement {
   const [pasted, setPasted] = useState(false);
   const [splitPercent, setSplitPercent] = useState(50);
@@ -71,6 +73,18 @@ export function ToolPane({
     }
   };
 
+  const handleClear = (): void => {
+    onInputChange("");
+    onClear?.();
+  };
+
+  const handleSample = (): void => {
+    if (sampleData) {
+      onInputChange(sampleData);
+    }
+  };
+
+  const hasContent = Boolean(inputValue || outputValue);
   const showPasteHint = clipboardText && !pasted && !inputValue;
 
   const onMouseDown = useCallback((e: React.MouseEvent): void => {
@@ -102,6 +116,22 @@ export function ToolPane({
     <div className="flex flex-col h-full">
       {/* Action bar */}
       <div className="flex items-center gap-1.5 px-3 py-2 border-b border-gray-200/60 dark:border-white/[0.06]">
+        {/* Sample & Clear — always first */}
+        {sampleData && (
+          <Button onClick={handleSample} variant="secondary">
+            Sample
+          </Button>
+        )}
+        <Button onClick={handleClear} variant="secondary" disabled={!hasContent}>
+          Clear
+        </Button>
+
+        {/* Separator between global and tool-specific actions */}
+        {actions.length > 0 && (
+          <div className="w-px h-4 bg-gray-200/60 dark:bg-white/[0.08] mx-0.5" />
+        )}
+
+        {/* Tool-specific actions */}
         {actions.map((action) => (
           <Button
             key={action.label}
@@ -112,26 +142,6 @@ export function ToolPane({
             {action.label}
           </Button>
         ))}
-        <div className="ml-auto flex items-center gap-1">
-          {sampleData && (
-            <button
-              onClick={() => onInputChange(sampleData)}
-              title="Load sample data"
-              className="p-1 rounded-md text-gray-400/60 dark:text-gray-500/60 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-white/[0.06] transition-all duration-150"
-            >
-              <FlaskConical className="w-3.5 h-3.5" strokeWidth={1.8} />
-            </button>
-          )}
-          {inputValue && (
-            <button
-              onClick={() => onInputChange("")}
-              title="Clear input"
-              className="p-1 rounded-md text-gray-400/60 dark:text-gray-500/60 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-white/[0.06] transition-all duration-150"
-            >
-              <X className="w-3.5 h-3.5" strokeWidth={1.8} />
-            </button>
-          )}
-        </div>
       </div>
 
       {/* Split pane — resizable */}

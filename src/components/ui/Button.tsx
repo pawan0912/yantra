@@ -8,6 +8,7 @@ type ButtonProps = {
   onClick: () => void;
   variant?: ButtonVariant;
   active?: boolean;
+  disabled?: boolean;
   title?: string;
   icon?: LucideIcon;
   className?: string;
@@ -39,6 +40,7 @@ export function Button({
   onClick,
   variant = "secondary",
   active = false,
+  disabled = false,
   title,
   icon: Icon,
   className,
@@ -46,7 +48,12 @@ export function Button({
   const style = active ? variants[variant].active : variants[variant].normal;
 
   return (
-    <button onClick={onClick} title={title} className={cn(base, style, className)}>
+    <button
+      onClick={disabled ? undefined : onClick}
+      title={title}
+      disabled={disabled}
+      className={cn(base, style, disabled && "opacity-30 pointer-events-none", className)}
+    >
       {Icon && <Icon className="w-[18px] h-[18px]" strokeWidth={1.5} />}
       {children}
     </button>
