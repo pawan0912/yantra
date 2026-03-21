@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { AppShell } from "./components/layout/AppShell";
 import { CommandPalette } from "./components/layout/CommandPalette";
-import { SettingsPanel } from "./components/layout/SettingsPanel";
 import { tools } from "./tools/registry";
 import { useClipboard } from "./hooks/useClipboard";
 import { initTheme } from "./store/theme";
@@ -13,7 +12,7 @@ initTheme();
 export function App(): React.ReactElement {
   const [activeToolId, setActiveToolId] = useState(tools[0].id);
   const [paletteOpen, setPaletteOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const { clipboardText, refresh } = useClipboard();
 
   useEffect(() => {
@@ -23,6 +22,12 @@ export function App(): React.ReactElement {
     window.addEventListener("focus", handleFocus);
     return () => window.removeEventListener("focus", handleFocus);
   }, [refresh]);
+
+  // When selecting a tool, exit settings view
+  const handleToolSelect = useCallback((toolId: string): void => {
+    setActiveToolId(toolId);
+    setShowSettings(false);
+  }, []);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent): void => {
@@ -34,26 +39,22 @@ export function App(): React.ReactElement {
 
       if (e.metaKey && e.key === ",") {
         e.preventDefault();
-        setSettingsOpen((open) => !open);
+        setShowSettings((open) => !open);
         return;
       }
 
       if (e.metaKey && e.key >= "1" && e.key <= "9") {
         e.preventDefault();
         const tool = tools.find((t) => t.shortcut === e.key);
-        if (tool) setActiveToolId(tool.id);
+        if (tool) handleToolSelect(tool.id);
         return;
       }
 
-      if (e.key === "Escape") {
-        if (settingsOpen) {
-          setSettingsOpen(false);
-        } else if (paletteOpen) {
-          setPaletteOpen(false);
-        }
+      if (e.key === "Escape" && paletteOpen) {
+        setPaletteOpen(false);
       }
     },
-    [paletteOpen, settingsOpen]
+    [paletteOpen, handleToolSelect]
   );
 
   useEffect(() => {
@@ -65,18 +66,15 @@ export function App(): React.ReactElement {
     <>
       <AppShell
         activeToolId={activeToolId}
-        onToolSelect={setActiveToolId}
+        onToolSelect={handleToolSelect}
         clipboardText={clipboardText}
-        onSettingsOpen={() => setSettingsOpen(true)}
+        showSettings={showSettings}
+        onSettingsToggle={() => setShowSettings((s) => !s)}
       />
       <CommandPalette
         isOpen={paletteOpen}
         onClose={() => setPaletteOpen(false)}
-        onSelect={setActiveToolId}
-      />
-      <SettingsPanel
-        isOpen={settingsOpen}
-        onClose={() => setSettingsOpen(false)}
+        onSelect={handleToolSelect}
       />
     </>
   );
