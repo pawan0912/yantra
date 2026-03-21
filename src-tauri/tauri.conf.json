@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "yantra-scaffold",
+  "productName": "Yantra",
   "version": "0.1.0",
-  "identifier": "com.pawanverma.yantra-scaffold",
+  "identifier": "com.yantra.dev",
   "build": {
     "beforeDevCommand": "bun run dev",
     "devUrl": "http://localhost:1420",
@@ -12,9 +12,16 @@
   "app": {
     "windows": [
       {
-        "title": "yantra-scaffold",
-        "width": 800,
-        "height": 600
+        "label": "main",
+        "title": "Yantra",
+        "width": 900,
+        "height": 600,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "visible": false,
+        "resizable": true
       }
     ],
     "security": {
