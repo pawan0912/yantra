@@ -31,8 +31,8 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettin
     <div className="flex flex-col h-screen bg-white/80 dark:bg-gray-950/90 backdrop-blur-2xl text-gray-900 dark:text-gray-100">
       {/* ── Top title bar — full width, independent of sidebar ── */}
       <div
-        className="h-12 flex items-center flex-shrink-0 border-b border-gray-200/60 dark:border-white/[0.06]"
-        style={{ paddingLeft: "var(--traffic-light-inset)" }}
+        className="flex items-center flex-shrink-0 border-b border-gray-200/60 dark:border-white/[0.06]"
+        style={{ paddingLeft: "var(--traffic-light-inset)", height: "var(--titlebar-height)" }}
         data-tauri-drag-region
       >
         {/* Sidebar toggle — always in the same position */}
@@ -48,7 +48,7 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettin
         </button>
 
         {/* Centered title */}
-        <span className="flex-1 text-center text-[13px] font-medium text-gray-500 dark:text-gray-400 pointer-events-none pr-[calc(var(--traffic-light-inset)+28px)]" data-tauri-drag-region>
+        <span className="flex-1 text-center text-[13px] font-medium text-gray-500 dark:text-gray-400 pointer-events-none" style={{ paddingRight: "calc(var(--traffic-light-inset) + 28px)" }} data-tauri-drag-region>
           {titleText}
         </span>
       </div>
