@@ -52,22 +52,22 @@ export function highlightJson({ json }: { json: string }): string {
     .replace(/>/g, "&gt;")
     .replace(
       /("(?:\\.|[^"\\])*")\s*:/g,
-      '<span class="text-gray-900 dark:text-gray-100 font-semibold">$1</span>:'
+      '<span style="font-weight:600">$1</span>:'
     )
     .replace(
       /:\s*("(?:\\.|[^"\\])*")/g,
-      ': <span class="text-green-600 dark:text-green-400">$1</span>'
+      ': <span style="color:#16a34a">$1</span>'
     )
     .replace(
       /:\s*(\d+\.?\d*)/g,
-      ': <span class="text-blue-600 dark:text-blue-400">$1</span>'
+      ': <span style="color:#2563eb">$1</span>'
     )
     .replace(
       /:\s*(true|false)/g,
-      ': <span class="text-orange-600 dark:text-orange-400">$1</span>'
+      ': <span style="color:#ea580c">$1</span>'
     )
     .replace(
       /:\s*(null)/g,
-      ': <span class="text-gray-400 dark:text-gray-500">$1</span>'
+      ': <span style="color:#9ca3af">$1</span>'
     );
 }

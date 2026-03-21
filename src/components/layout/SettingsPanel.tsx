@@ -9,7 +9,7 @@ const THEME_OPTIONS = [
 
 const SHORTCUTS = [
   { keys: "⌘ K", desc: "Command palette" },
-  { keys: "⌘ 1–3", desc: "Switch tools" },
+  { keys: "⌘ 1–7", desc: "Switch tools" },
   { keys: "⌘ ,", desc: "Settings" },
   { keys: "⌃⇧ Space", desc: "Quick launch" },
 ];
