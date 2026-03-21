@@ -25,8 +25,8 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettin
     <div className="flex h-screen bg-white/80 dark:bg-gray-950/90 backdrop-blur-2xl text-gray-900 dark:text-gray-100">
       {/* Sidebar */}
       <nav className="w-[180px] flex-shrink-0 border-r border-gray-200/60 dark:border-white/[0.06] bg-gray-50/80 dark:bg-white/[0.03] flex flex-col select-none">
-        {/* Spacer for native macOS traffic lights (titleBarStyle: Overlay) */}
-        <div className="h-12 flex-shrink-0" />
+        {/* Spacer for native macOS traffic lights (titleBarStyle: Overlay) — draggable */}
+        <div className="h-12 flex-shrink-0" data-tauri-drag-region />
 
         {/* Tool list */}
         <div className="flex-1 overflow-y-auto px-2 py-1 space-y-0.5">
@@ -77,9 +77,9 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettin
 
       {/* Main content */}
       <main className="flex-1 min-w-0 min-h-0 flex flex-col">
-        {/* Title bar */}
-        <div className="h-12 flex items-center px-4 border-b border-gray-200/60 dark:border-white/[0.06] flex-shrink-0">
-          <span className="text-[13px] font-medium text-gray-500 dark:text-gray-400">
+        {/* Title bar — draggable */}
+        <div className="h-12 flex items-center px-4 border-b border-gray-200/60 dark:border-white/[0.06] flex-shrink-0" data-tauri-drag-region>
+          <span className="text-[13px] font-medium text-gray-500 dark:text-gray-400 pointer-events-none" data-tauri-drag-region>
             {titleText}
           </span>
         </div>
