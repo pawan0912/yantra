@@ -105,7 +105,10 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettin
       {/* Main content */}
       <main className="flex-1 min-w-0 min-h-0 flex flex-col">
         {/* Title bar — draggable */}
-        <div className="h-12 flex items-center gap-2 px-3 border-b border-gray-200/60 dark:border-white/[0.06] flex-shrink-0" data-tauri-drag-region>
+        <div className={cn(
+          "h-12 flex items-center gap-2 border-b border-gray-200/60 dark:border-white/[0.06] flex-shrink-0 px-3",
+          !sidebarOpen && "pl-20"
+        )} data-tauri-drag-region>
           {/* Show sidebar toggle when sidebar is collapsed */}
           {!sidebarOpen && (
             <button
