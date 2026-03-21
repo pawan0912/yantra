@@ -1,5 +1,5 @@
 import { Suspense, useState } from "react";
-import { Settings, PanelLeft } from "lucide-react";
+import { Settings, PanelLeft, PanelLeftClose } from "lucide-react";
 import { tools } from "../../tools/registry";
 import { cn } from "../../lib/utils";
 import { SettingsScreen } from "./SettingsPanel";
@@ -12,8 +12,9 @@ type AppShellProps = {
   onSettingsToggle: () => void;
 };
 
-function SidebarIcon(): React.ReactElement {
-  return <PanelLeft className="w-[18px] h-[18px]" strokeWidth={1.5} />;
+function SidebarToggleIcon({ open }: { open: boolean }): React.ReactElement {
+  const Icon = open ? PanelLeftClose : PanelLeft;
+  return <Icon className="w-[18px] h-[18px]" strokeWidth={1.5} />;
 }
 
 export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettings, onSettingsToggle }: AppShellProps): React.ReactElement {
@@ -40,7 +41,7 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettin
                      hover:bg-gray-200/60 dark:hover:bg-white/[0.06]
                      transition-all duration-150 ease-out"
         >
-          <SidebarIcon />
+          <SidebarToggleIcon open={sidebarOpen} />
         </button>
 
         {/* Centered title */}
@@ -108,13 +109,7 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettin
           {showSettings ? (
             <SettingsScreen />
           ) : (
-            <Suspense
-              fallback={
-                <div className="flex items-center justify-center h-full text-sm text-gray-400 dark:text-gray-500">
-                  <div className="animate-pulse">Loading...</div>
-                </div>
-              }
-            >
+            <Suspense fallback={<div className="h-full" />}>
               <ActiveComponent clipboardText={clipboardText} clipboardMatch={activeTool.matchClipboard(clipboardText)} />
             </Suspense>
           )}
