@@ -1,12 +1,11 @@
 import { Suspense, useState } from "react";
 import { useAtomValue } from "jotai";
-import { Settings, PanelLeft, PanelLeftClose } from "lucide-react";
+import { Settings, PanelLeft, PanelLeftClose, ChevronDown } from "lucide-react";
 import { tools, TOOL_CATEGORIES } from "../../tools/registry";
 import type { ToolPlugin } from "../../tools/types";
 import { toolConfigAtom } from "../../store/atoms";
 import { cn } from "../../lib/utils";
 import { SettingsScreen } from "./SettingsPanel";
-import { Kbd } from "../ui";
 
 type AppShellProps = {
   activeToolId: string;
@@ -26,18 +25,16 @@ function useVisibleTools(): Array<{ category: string; label: string; tools: Tool
 
   const enabledTools = tools.filter((t) => {
     const cfg = config[t.id];
-    return cfg ? cfg.enabled : true; // enabled by default
+    return cfg ? cfg.enabled : true;
   });
 
-  // Sort by user-defined order within each category
   const sorted = [...enabledTools].sort((a, b) => {
     const orderA = config[a.id]?.order ?? Infinity;
     const orderB = config[b.id]?.order ?? Infinity;
     if (orderA !== orderB) return orderA - orderB;
-    return 0; // preserve registry order as fallback
+    return 0;
   });
 
-  // Group by category
   const groups: Array<{ category: string; label: string; tools: ToolPlugin[] }> = [];
   for (const cat of TOOL_CATEGORIES) {
     const catTools = sorted.filter((t) => t.category === cat.id);
@@ -46,6 +43,58 @@ function useVisibleTools(): Array<{ category: string; label: string; tools: Tool
     }
   }
   return groups;
+}
+
+function CollapsibleGroup({ label, tools: groupTools, activeToolId, showSettings, onToolSelect, isFirst }: {
+  label: string;
+  tools: ToolPlugin[];
+  activeToolId: string;
+  showSettings: boolean;
+  onToolSelect: (id: string) => void;
+  isFirst: boolean;
+}): React.ReactElement {
+  const [collapsed, setCollapsed] = useState(false);
+
+  return (
+    <div className={cn(!isFirst && "mt-2")}>
+      {/* Category header — clickable to collapse */}
+      <button
+        onClick={() => setCollapsed((c) => !c)}
+        className="w-full flex items-center gap-1 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400/70 dark:text-gray-500/70 whitespace-nowrap hover:text-gray-500 dark:hover:text-gray-400 transition-colors duration-150"
+      >
+        <ChevronDown
+          className={cn(
+            "w-3 h-3 transition-transform duration-150",
+            collapsed && "-rotate-90"
+          )}
+          strokeWidth={2}
+        />
+        {label}
+      </button>
+
+      {/* Tools */}
+      {!collapsed && (
+        <div className="space-y-0.5">
+          {groupTools.map((tool) => (
+            <button
+              key={tool.id}
+              onClick={() => onToolSelect(tool.id)}
+              className={cn(
+                "w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-lg text-[13px] text-left whitespace-nowrap",
+                "transition-all duration-150 ease-out",
+                !showSettings && tool.id === activeToolId
+                  ? "bg-blue-500/12 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 font-medium shadow-sm shadow-blue-500/5"
+                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-200/60 dark:hover:bg-white/[0.06] active:bg-gray-200/80 dark:active:bg-white/[0.08]"
+              )}
+            >
+              <tool.icon className="w-4 h-4 opacity-70 flex-shrink-0" strokeWidth={1.5} />
+              <span className="truncate flex-1">{tool.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettings, onSettingsToggle }: AppShellProps): React.ReactElement {
@@ -58,7 +107,7 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettin
 
   return (
     <div className="flex flex-col h-screen bg-white/80 dark:bg-gray-950/90 backdrop-blur-2xl text-gray-900 dark:text-gray-100">
-      {/* ── Top title bar — full width, independent of sidebar ── */}
+      {/* ── Top title bar ── */}
       <div
         className="flex items-center flex-shrink-0 border-b border-gray-200/60 dark:border-white/[0.06]"
         style={{ paddingLeft: "var(--traffic-light-inset)", height: "var(--titlebar-height)" }}
@@ -80,7 +129,7 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettin
         </span>
       </div>
 
-      {/* ── Body — sidebar + content ── */}
+      {/* ── Body ── */}
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
         <nav
@@ -90,39 +139,18 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettin
             sidebarOpen ? "w-[180px]" : "w-0 border-r-0"
           )}
         >
-          {/* Grouped tool list */}
+          {/* Grouped tool list with collapsible sections */}
           <div className="flex-1 overflow-y-auto px-2 py-2">
             {groups.map((group, gi) => (
-              <div key={group.category}>
-                {/* Category label */}
-                <div className={cn(
-                  "px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400/70 dark:text-gray-500/70 whitespace-nowrap",
-                  gi > 0 && "mt-3"
-                )}>
-                  {group.label}
-                </div>
-
-                {/* Tools in category */}
-                <div className="space-y-0.5">
-                  {group.tools.map((tool) => (
-                    <button
-                      key={tool.id}
-                      onClick={() => onToolSelect(tool.id)}
-                      className={cn(
-                        "w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-lg text-[13px] text-left whitespace-nowrap",
-                        "transition-all duration-150 ease-out",
-                        !showSettings && tool.id === activeToolId
-                          ? "bg-blue-500/12 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 font-medium shadow-sm shadow-blue-500/5"
-                          : "text-gray-600 dark:text-gray-400 hover:bg-gray-200/60 dark:hover:bg-white/[0.06] active:bg-gray-200/80 dark:active:bg-white/[0.08]"
-                      )}
-                    >
-                      <tool.icon className="w-4 h-4 opacity-70 flex-shrink-0" strokeWidth={1.5} />
-                      <span className="truncate flex-1">{tool.name}</span>
-                      <Kbd>{"\u2318"}{tool.shortcut}</Kbd>
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <CollapsibleGroup
+                key={group.category}
+                label={group.label}
+                tools={group.tools}
+                activeToolId={activeToolId}
+                showSettings={showSettings}
+                onToolSelect={onToolSelect}
+                isFirst={gi === 0}
+              />
             ))}
           </div>
 
@@ -140,7 +168,6 @@ export function AppShell({ activeToolId, onToolSelect, clipboardText, showSettin
             >
               <Settings className="w-4 h-4 opacity-70" strokeWidth={1.5} />
               <span>Settings</span>
-              <Kbd className="ml-auto">{"\u2318"},</Kbd>
             </button>
           </div>
         </nav>

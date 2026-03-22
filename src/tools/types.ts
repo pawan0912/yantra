@@ -14,11 +14,10 @@ export type ToolProps = {
  * Categories are rendered in the order defined here.
  */
 export const TOOL_CATEGORIES = [
-  { id: "transform", label: "Transform" },
-  { id: "generate", label: "Generate" },
-  { id: "compare", label: "Compare" },
-  { id: "inspect", label: "Inspect" },
-  { id: "network", label: "Network" },
+  { id: "json", label: "JSON" },
+  { id: "text", label: "Text" },
+  { id: "web", label: "Web" },
+  { id: "misc", label: "Misc" },
 ] as const;
 
 export type ToolCategory = (typeof TOOL_CATEGORIES)[number]["id"];
@@ -38,8 +37,6 @@ export type ToolPlugin = {
   icon: LucideIcon;
   /** Category for sidebar grouping */
   category: ToolCategory;
-  /** Keyboard shortcut digit (0-9) */
-  shortcut: string;
   /** Lazy-loaded React component */
   component: LazyExoticComponent<ComponentType<ToolProps>>;
   /** Search tags for command palette fuzzy matching */

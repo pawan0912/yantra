@@ -23,14 +23,13 @@ export { TOOL_CATEGORIES } from "./types";
  * Each tool fully describes itself — the shell knows nothing tool-specific.
  */
 export const tools: ToolPlugin[] = [
-  // ── Transform ──
+  // ── JSON ──
   {
     id: "json",
     name: "JSON Formatter",
     description: "Format, minify, and validate JSON",
     icon: Braces,
-    category: "transform",
-    shortcut: "1",  // ⌘1
+    category: "json",
     component: lazy(() =>
       import("./json/JsonFormatter").then((m) => ({ default: m.JsonFormatter }))
     ),
@@ -38,12 +37,25 @@ export const tools: ToolPlugin[] = [
     matchClipboard: (t) => { const s = t.trim(); return s.startsWith("{") || s.startsWith("["); },
   },
   {
+    id: "json-to-types",
+    name: "JSON → Types",
+    description: "Generate TypeScript interfaces or Zod schemas from JSON",
+    icon: FileType,
+    category: "json",
+    component: lazy(() =>
+      import("./json-to-types/JsonToTypes").then((m) => ({ default: m.JsonToTypes }))
+    ),
+    tags: ["json", "typescript", "zod", "types", "interface", "schema", "codegen"],
+    matchClipboard: (t) => { const s = t.trim(); return s.startsWith("{") || s.startsWith("["); },
+  },
+
+  // ── Text ──
+  {
     id: "base64",
     name: "Base64",
     description: "Encode and decode Base64 strings",
     icon: Binary,
-    category: "transform",
-    shortcut: "2",
+    category: "text",
     component: lazy(() =>
       import("./base64/Base64Tool").then((m) => ({ default: m.Base64Tool }))
     ),
@@ -51,66 +63,23 @@ export const tools: ToolPlugin[] = [
     matchClipboard: () => false,
   },
   {
-    id: "url",
-    name: "URL Parser",
-    description: "Parse, encode, and decode URLs",
-    icon: Link,
-    category: "transform",
-    shortcut: "3",
+    id: "diff",
+    name: "Diff Viewer",
+    description: "Compare two texts and see line-by-line differences",
+    icon: GitCompareArrows,
+    category: "text",
     component: lazy(() =>
-      import("./url/UrlParser").then((m) => ({ default: m.UrlParser }))
+      import("./diff/DiffViewer").then((m) => ({ default: m.DiffViewer }))
     ),
-    tags: ["url", "encode", "decode", "query", "params", "uri", "deeplink"],
-    matchClipboard: (t) => /^https?:\/\//.test(t.trim()) || /^\w+:\/\//.test(t.trim()),
-  },
-  {
-    id: "color",
-    name: "Color Converter",
-    description: "Convert between hex, RGB, and HSL color formats",
-    icon: Palette,
-    category: "transform",
-    shortcut: "4",
-    component: lazy(() =>
-      import("./color/ColorConverter").then((m) => ({ default: m.ColorConverter }))
-    ),
-    tags: ["color", "hex", "rgb", "hsl", "css", "tailwind", "contrast"],
-    matchClipboard: (t) => { const s = t.trim(); return /^#[0-9a-fA-F]{3,8}$/.test(s) || /^rgba?\(/.test(s) || /^hsla?\(/.test(s); },
-  },
-  {
-    id: "curl",
-    name: "cURL Converter",
-    description: "Convert cURL commands to fetch, axios, or React Query",
-    icon: Terminal,
-    category: "transform",
-    shortcut: "5",
-    component: lazy(() =>
-      import("./curl/CurlConverter").then((m) => ({ default: m.CurlConverter }))
-    ),
-    tags: ["curl", "fetch", "axios", "http", "api", "request", "react-query"],
-    matchClipboard: (t) => t.trim().toLowerCase().startsWith("curl"),
-  },
-
-  // ── Generate ──
-  {
-    id: "json-to-types",
-    name: "JSON → Types",
-    description: "Generate TypeScript interfaces or Zod schemas from JSON",
-    icon: FileType,
-    category: "generate",
-    shortcut: "6",
-    component: lazy(() =>
-      import("./json-to-types/JsonToTypes").then((m) => ({ default: m.JsonToTypes }))
-    ),
-    tags: ["json", "typescript", "zod", "types", "interface", "schema", "codegen"],
-    matchClipboard: (t) => { const s = t.trim(); return s.startsWith("{") || s.startsWith("["); },
+    tags: ["diff", "compare", "merge", "text", "json", "config"],
+    matchClipboard: () => false,
   },
   {
     id: "regex",
     name: "Regex Tester",
     description: "Test regex patterns with live match highlighting",
     icon: Regex,
-    category: "generate",
-    shortcut: "7",
+    category: "text",
     component: lazy(() =>
       import("./regex/RegexTester").then((m) => ({ default: m.RegexTester }))
     ),
@@ -118,29 +87,37 @@ export const tools: ToolPlugin[] = [
     matchClipboard: () => false,
   },
 
-  // ── Compare ──
+  // ── Web ──
   {
-    id: "diff",
-    name: "Diff Viewer",
-    description: "Compare two texts and see line-by-line differences",
-    icon: GitCompareArrows,
-    category: "compare",
-    shortcut: "8",
+    id: "url",
+    name: "URL Parser",
+    description: "Parse, encode, and decode URLs",
+    icon: Link,
+    category: "web",
     component: lazy(() =>
-      import("./diff/DiffViewer").then((m) => ({ default: m.DiffViewer }))
+      import("./url/UrlParser").then((m) => ({ default: m.UrlParser }))
     ),
-    tags: ["diff", "compare", "merge", "text", "json", "config"],
-    matchClipboard: () => false,
+    tags: ["url", "encode", "decode", "query", "params", "uri", "deeplink"],
+    matchClipboard: (t) => /^https?:\/\//.test(t.trim()) || /^\w+:\/\//.test(t.trim()),
   },
-
-  // ── Inspect ──
+  {
+    id: "curl",
+    name: "cURL Converter",
+    description: "Convert cURL commands to fetch, axios, or React Query",
+    icon: Terminal,
+    category: "web",
+    component: lazy(() =>
+      import("./curl/CurlConverter").then((m) => ({ default: m.CurlConverter }))
+    ),
+    tags: ["curl", "fetch", "axios", "http", "api", "request", "react-query"],
+    matchClipboard: (t) => t.trim().toLowerCase().startsWith("curl"),
+  },
   {
     id: "jwt",
     name: "JWT Decoder",
     description: "Decode and inspect JWT tokens",
     icon: KeyRound,
-    category: "inspect",
-    shortcut: "9",
+    category: "web",
     component: lazy(() =>
       import("./jwt/JwtDecoder").then((m) => ({ default: m.JwtDecoder }))
     ),
@@ -148,31 +125,41 @@ export const tools: ToolPlugin[] = [
     matchClipboard: (t) => { const s = t.trim(); return s.split(".").length === 3 && s.startsWith("ey"); },
   },
   {
+    id: "api-playground",
+    name: "API Playground",
+    description: "Lightweight HTTP client — send requests, inspect responses",
+    icon: Globe,
+    category: "web",
+    component: lazy(() =>
+      import("./api-playground/ApiPlayground").then((m) => ({ default: m.ApiPlayground }))
+    ),
+    tags: ["api", "http", "rest", "request", "response", "postman", "curl", "fetch", "playground"],
+    matchClipboard: (t) => /^https?:\/\//.test(t.trim()) || t.trim().toLowerCase().startsWith("curl"),
+  },
+
+  // ── Misc ──
+  {
     id: "timestamp",
     name: "Timestamp",
     description: "Convert between timestamp formats",
     icon: Clock,
-    category: "inspect",
-    shortcut: "0",
+    category: "misc",
     component: lazy(() =>
       import("./timestamp/TimestampConverter").then((m) => ({ default: m.TimestampConverter }))
     ),
     tags: ["timestamp", "unix", "epoch", "date", "time", "iso"],
     matchClipboard: (t) => { const s = t.trim(); return /^\d{10,13}$/.test(s) || /^\d{4}-\d{2}-\d{2}/.test(s); },
   },
-
-  // ── Network ──
   {
-    id: "api-playground",
-    name: "API Playground",
-    description: "Lightweight HTTP client — send requests, inspect responses",
-    icon: Globe,
-    category: "network",
-    shortcut: "",
+    id: "color",
+    name: "Color Converter",
+    description: "Convert between hex, RGB, and HSL color formats",
+    icon: Palette,
+    category: "misc",
     component: lazy(() =>
-      import("./api-playground/ApiPlayground").then((m) => ({ default: m.ApiPlayground }))
+      import("./color/ColorConverter").then((m) => ({ default: m.ColorConverter }))
     ),
-    tags: ["api", "http", "rest", "request", "response", "postman", "curl", "fetch", "playground"],
-    matchClipboard: (t) => /^https?:\/\//.test(t.trim()) || t.trim().toLowerCase().startsWith("curl"),
+    tags: ["color", "hex", "rgb", "hsl", "css", "tailwind", "contrast"],
+    matchClipboard: (t) => { const s = t.trim(); return /^#[0-9a-fA-F]{3,8}$/.test(s) || /^rgba?\(/.test(s) || /^hsla?\(/.test(s); },
   },
 ];

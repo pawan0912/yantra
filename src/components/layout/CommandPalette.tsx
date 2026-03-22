@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { Search } from "lucide-react";
 import { tools } from "../../tools/registry";
 import { cn } from "../../lib/utils";
-import { Kbd } from "../ui";
 
 type CommandPaletteProps = {
   isOpen: boolean;
@@ -109,7 +108,7 @@ export function CommandPalette({ isOpen, onClose, onSelect }: CommandPaletteProp
                   {tool.description}
                 </div>
               </div>
-              <Kbd variant="contained">{"\u2318"}{tool.shortcut}</Kbd>
+              <span className="text-[10px] text-gray-400/60 dark:text-gray-500/60 uppercase tracking-wider">{tool.category}</span>
             </button>
           ))}
           {filtered.length === 0 && (
