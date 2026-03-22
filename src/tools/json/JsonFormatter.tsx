@@ -1,16 +1,15 @@
 import { useMemo } from "react";
+import { useAtom, useSetAtom } from "jotai";
 import { ToolPane } from "../../components/layout/ToolPane";
-import { useToolState } from "../../hooks/useToolState";
+import { jsonToolAtoms } from "../../store/atoms";
 import { formatJson, minifyJson, validateJson, getJsonMeta, highlightJson } from "./json.utils";
 import type { ToolProps } from "../registry";
 
 const SAMPLE_DATA = '{"name": "John Doe", "age": 30, "email": "john@example.com", "address": {"city": "San Francisco", "state": "CA"}, "hobbies": ["coding", "hiking", "photography"]}';
 
 export function JsonFormatter({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
-  const { state, update, reset } = useToolState({
-    toolId: "json",
-    initial: { input: "", output: "" },
-  });
+  const [state, setState] = useAtom(jsonToolAtoms.stateAtom);
+  const reset = useSetAtom(jsonToolAtoms.resetAtom);
 
   const validation = useMemo(() => {
     if (!state.input.trim()) return null;
@@ -34,17 +33,17 @@ export function JsonFormatter({ clipboardText, clipboardMatch }: ToolProps): Rea
 
   const handleFormat = (): void => {
     try {
-      update({ output: formatJson({ input: state.input }) });
+      setState((prev) => ({ ...prev, output: formatJson({ input: state.input }) }));
     } catch {
-      update({ output: "" });
+      setState((prev) => ({ ...prev, output: "" }));
     }
   };
 
   const handleMinify = (): void => {
     try {
-      update({ output: minifyJson({ input: state.input }) });
+      setState((prev) => ({ ...prev, output: minifyJson({ input: state.input }) }));
     } catch {
-      update({ output: "" });
+      setState((prev) => ({ ...prev, output: "" }));
     }
   };
 
@@ -53,7 +52,7 @@ export function JsonFormatter({ clipboardText, clipboardMatch }: ToolProps): Rea
   return (
     <ToolPane
       inputValue={state.input}
-      onInputChange={(v: string) => update({ input: v })}
+      onInputChange={(v: string) => setState((prev) => ({ ...prev, input: v }))}
       outputValue={state.output}
       sampleData={SAMPLE_DATA}
       outputElement={

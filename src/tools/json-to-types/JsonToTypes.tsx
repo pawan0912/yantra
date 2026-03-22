@@ -1,6 +1,7 @@
 import { useMemo } from "react";
+import { useAtom, useSetAtom } from "jotai";
 import { ToolPane } from "../../components/layout/ToolPane";
-import { useToolState } from "../../hooks/useToolState";
+import { jsonToTypesToolAtoms } from "../../store/atoms";
 import { jsonToTypeScript, jsonToZod, countFields } from "./json-to-types.utils";
 import type { ToolProps } from "../registry";
 
@@ -9,10 +10,8 @@ type OutputMode = "typescript" | "zod";
 const SAMPLE_DATA = '{"id": 1, "name": "John Doe", "email": "john@example.com", "isActive": true, "roles": ["admin", "user"], "profile": {"avatar": "https://example.com/avatar.png", "bio": null}}';
 
 export function JsonToTypes({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
-  const { state, update, reset } = useToolState({
-    toolId: "json-to-types",
-    initial: { input: "", mode: "typescript" as OutputMode },
-  });
+  const [state, setState] = useAtom(jsonToTypesToolAtoms.stateAtom);
+  const reset = useSetAtom(jsonToTypesToolAtoms.resetAtom);
 
   const result = useMemo(() => {
     const trimmed = state.input.trim();
@@ -37,7 +36,7 @@ export function JsonToTypes({ clipboardText, clipboardMatch }: ToolProps): React
   return (
     <ToolPane
       inputValue={state.input}
-      onInputChange={(v: string) => update({ input: v })}
+      onInputChange={(v: string) => setState((prev) => ({ ...prev, input: v }))}
       outputValue={result.output}
       sampleData={SAMPLE_DATA}
       outputElement={
@@ -52,8 +51,8 @@ export function JsonToTypes({ clipboardText, clipboardMatch }: ToolProps): React
       clipboardMatch={clipboardMatch}
       onClear={reset}
       actions={[
-        { label: "TypeScript", onClick: () => update({ mode: "typescript" }), active: state.mode === "typescript" },
-        { label: "Zod", onClick: () => update({ mode: "zod" }), active: state.mode === "zod" },
+        { label: "TypeScript", onClick: () => setState((prev) => ({ ...prev, mode: "typescript" as OutputMode })), active: state.mode === "typescript" },
+        { label: "Zod", onClick: () => setState((prev) => ({ ...prev, mode: "zod" as OutputMode })), active: state.mode === "zod" },
       ]}
       meta={result.meta}
       error={result.error}

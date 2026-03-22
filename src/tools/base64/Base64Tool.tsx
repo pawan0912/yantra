@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
+import { useAtom, useSetAtom } from "jotai";
 import { ToolPane } from "../../components/layout/ToolPane";
-import { useToolState } from "../../hooks/useToolState";
+import { base64ToolAtoms } from "../../store/atoms";
 import { Toggle } from "../../components/ui/Toggle";
 import { encode, decode, isBase64Image, looksLikeBase64 } from "./base64.utils";
 import type { ToolProps } from "../registry";
@@ -11,20 +12,18 @@ type Variant = "standard" | "urlsafe";
 const SAMPLE_DATA = "Hello, World! This is a sample text for Base64 encoding. \u{1F680}";
 
 export function Base64Tool({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
-  const { state, update, reset } = useToolState({
-    toolId: "base64",
-    initial: { input: "", mode: "encode" as Mode, variant: "standard" as Variant },
-  });
+  const [state, setState] = useAtom(base64ToolAtoms.stateAtom);
+  const reset = useSetAtom(base64ToolAtoms.resetAtom);
   const [userSetMode, setUserSetMode] = useState(false);
 
   useEffect(() => {
     if (!userSetMode && state.input && looksLikeBase64({ input: state.input })) {
-      update({ mode: "decode" });
+      setState((prev) => ({ ...prev, mode: "decode" as Mode }));
     }
   }, [state.input, userSetMode]);
 
   const handleModeChange = (v: string): void => {
-    update({ mode: v as Mode });
+    setState((prev) => ({ ...prev, mode: v as Mode }));
     setUserSetMode(true);
   };
 
@@ -64,7 +63,7 @@ export function Base64Tool({ clipboardText, clipboardMatch }: ToolProps): React.
             { label: "URL-safe", value: "urlsafe" },
           ]}
           value={state.variant}
-          onChange={(v) => update({ variant: v as Variant })}
+          onChange={(v) => setState((prev) => ({ ...prev, variant: v as Variant }))}
         />
       </div>
       <div className="flex-1 overflow-auto p-3">
@@ -87,7 +86,7 @@ export function Base64Tool({ clipboardText, clipboardMatch }: ToolProps): React.
   return (
     <ToolPane
       inputValue={state.input}
-      onInputChange={(v: string) => update({ input: v })}
+      onInputChange={(v: string) => setState((prev) => ({ ...prev, input: v }))}
       outputValue={output}
       outputElement={outputElement}
       sampleData={SAMPLE_DATA}

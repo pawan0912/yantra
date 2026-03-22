@@ -1,16 +1,15 @@
 import { useMemo } from "react";
+import { useAtom, useSetAtom } from "jotai";
 import { ToolPane } from "../../components/layout/ToolPane";
-import { useToolState } from "../../hooks/useToolState";
+import { urlToolAtoms } from "../../store/atoms";
 import { parseUrl, encodeUrlString, decodeUrlString } from "./url.utils";
 import type { ToolProps } from "../registry";
 
 const SAMPLE_DATA = "https://api.example.com/v2/users?page=1&limit=25&sort=name&filter=active#results";
 
 export function UrlParser({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
-  const { state, update, reset } = useToolState({
-    toolId: "url",
-    initial: { input: "", mode: "parse" as "parse" | "encode" | "decode" },
-  });
+  const [state, setState] = useAtom(urlToolAtoms.stateAtom);
+  const reset = useSetAtom(urlToolAtoms.resetAtom);
 
   const parsed = useMemo(() => {
     if (!state.input.trim() || state.mode !== "parse") return null;
@@ -43,7 +42,7 @@ export function UrlParser({ clipboardText, clipboardMatch }: ToolProps): React.R
   return (
     <ToolPane
       inputValue={state.input}
-      onInputChange={(v: string) => update({ input: v })}
+      onInputChange={(v: string) => setState((prev) => ({ ...prev, input: v }))}
       outputValue={outputValue}
       outputElement={outputElement}
       sampleData={SAMPLE_DATA}
@@ -52,9 +51,9 @@ export function UrlParser({ clipboardText, clipboardMatch }: ToolProps): React.R
       onClear={reset}
       placeholder="Paste a URL to parse, encode, or decode..."
       actions={[
-        { label: "Parse", onClick: () => update({ mode: "parse" }), active: state.mode === "parse" },
-        { label: "Encode", onClick: () => update({ mode: "encode" }), active: state.mode === "encode" },
-        { label: "Decode", onClick: () => update({ mode: "decode" }), active: state.mode === "decode" },
+        { label: "Parse", onClick: () => setState((prev) => ({ ...prev, mode: "parse" as const })), active: state.mode === "parse" },
+        { label: "Encode", onClick: () => setState((prev) => ({ ...prev, mode: "encode" as const })), active: state.mode === "encode" },
+        { label: "Decode", onClick: () => setState((prev) => ({ ...prev, mode: "decode" as const })), active: state.mode === "decode" },
       ]}
       meta={meta}
       error={error}

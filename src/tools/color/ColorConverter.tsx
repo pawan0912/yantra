@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
+import { useAtom, useSetAtom } from "jotai";
 import { ToolPane } from "../../components/layout/ToolPane";
-import { useToolState } from "../../hooks/useToolState";
+import { colorToolAtoms } from "../../store/atoms";
 import { parseColor, getAllFormats, detectColorFormat, toHex } from "./color.utils";
 import type { ToolProps } from "../registry";
 
@@ -25,10 +26,8 @@ function CopyIndicator({ text }: { text: string }): React.ReactElement {
 const SAMPLE_DATA = "#3b82f6";
 
 export function ColorConverter({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
-  const { state, update, reset } = useToolState({
-    toolId: "color",
-    initial: { input: "" },
-  });
+  const [state, setState] = useAtom(colorToolAtoms.stateAtom);
+  const reset = useSetAtom(colorToolAtoms.resetAtom);
 
   const parsed = useMemo(() => {
     if (!state.input.trim()) return null;
@@ -94,7 +93,7 @@ export function ColorConverter({ clipboardText, clipboardMatch }: ToolProps): Re
   return (
     <ToolPane
       inputValue={state.input}
-      onInputChange={(v: string) => update({ input: v })}
+      onInputChange={(v: string) => setState((prev) => ({ ...prev, input: v }))}
       outputValue={color ? color.formats.hex : ""}
       outputElement={outputElement}
       sampleData={SAMPLE_DATA}
@@ -102,7 +101,7 @@ export function ColorConverter({ clipboardText, clipboardMatch }: ToolProps): Re
       clipboardMatch={clipboardMatch}
       onClear={reset}
       placeholder="Paste a color value (hex, rgb, or hsl)..."
-      actions={[{ label: "Parse", onClick: () => update({ input: state.input }) }]}
+      actions={[{ label: "Parse", onClick: () => setState((prev) => ({ ...prev, input: state.input })) }]}
       meta={meta}
       error={error}
     />

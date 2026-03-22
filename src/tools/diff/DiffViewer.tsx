@@ -1,7 +1,8 @@
 import { useMemo } from "react";
+import { useAtom } from "jotai";
 import { CopyButton } from "../../components/layout/CopyButton";
 import { Button, PaneHeader, Textarea } from "../../components/ui";
-import { useToolState } from "../../hooks/useToolState";
+import { diffToolAtoms } from "../../store/atoms";
 import { computeDiff, getDiffStats, isJsonLike, tryFormatJson, formatUnifiedDiff } from "./diff.utils";
 import type { DiffLine } from "./diff.utils";
 import type { ToolProps } from "../registry";
@@ -29,10 +30,7 @@ function DiffOutput({ lines }: { lines: DiffLine[] }): React.ReactElement {
 }
 
 export function DiffViewer(_props: ToolProps): React.ReactElement {
-  const { state, update } = useToolState({
-    toolId: "diff",
-    initial: { oldText: "", newText: "", lines: null as DiffLine[] | null },
-  });
+  const [state, setState] = useAtom(diffToolAtoms.stateAtom);
 
   const stats = useMemo(() => (state.lines ? getDiffStats({ lines: state.lines }) : null), [state.lines]);
   const unified = useMemo(() => (state.lines ? formatUnifiedDiff({ lines: state.lines }) : ""), [state.lines]);
@@ -44,7 +42,7 @@ export function DiffViewer(_props: ToolProps): React.ReactElement {
       a = tryFormatJson({ input: a });
       b = tryFormatJson({ input: b });
     }
-    update({ lines: computeDiff({ oldText: a, newText: b }) });
+    setState((prev) => ({ ...prev, lines: computeDiff({ oldText: a, newText: b }) }));
   };
 
   return (
@@ -69,12 +67,12 @@ export function DiffViewer(_props: ToolProps): React.ReactElement {
         {/* Original */}
         <div className="flex-1 flex flex-col min-w-0 border-r border-gray-200/60 dark:border-white/[0.06]">
           <PaneHeader label="Original" />
-          <Textarea value={state.oldText} onChange={(v: string) => update({ oldText: v })} placeholder="Paste the original text..." />
+          <Textarea value={state.oldText} onChange={(v: string) => setState((prev) => ({ ...prev, oldText: v }))} placeholder="Paste the original text..." />
         </div>
         {/* Modified */}
         <div className="flex-1 flex flex-col min-w-0">
           <PaneHeader label="Modified" />
-          <Textarea value={state.newText} onChange={(v: string) => update({ newText: v })} placeholder="Paste the modified text..." />
+          <Textarea value={state.newText} onChange={(v: string) => setState((prev) => ({ ...prev, newText: v }))} placeholder="Paste the modified text..." />
         </div>
       </div>
 

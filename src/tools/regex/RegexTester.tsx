@@ -1,6 +1,7 @@
 import { useMemo } from "react";
+import { useAtom } from "jotai";
 import { Button } from "../../components/ui";
-import { useToolState } from "../../hooks/useToolState";
+import { regexToolAtoms } from "../../store/atoms";
 import {
   testRegex,
   getMatchRanges,
@@ -13,18 +14,15 @@ type ToolProps = { clipboardText: string; clipboardMatch: boolean };
 
 const ALL_FLAGS = ["g", "i", "m", "s", "u"] as const;
 
-export function RegexTester({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
-  const { state, update } = useToolState({
-    toolId: "regex",
-    initial: { pattern: "", flags: "g", testString: clipboardMatch ? clipboardText : "" },
-  });
+export function RegexTester(_props: ToolProps): React.ReactElement {
+  const [state, setState] = useAtom(regexToolAtoms.stateAtom);
 
   const toggleFlag = (f: string): void => {
-    update({ flags: state.flags.includes(f) ? state.flags.replace(f, "") : state.flags + f });
+    setState((prev) => ({ ...prev, flags: prev.flags.includes(f) ? prev.flags.replace(f, "") : prev.flags + f }));
   };
 
   const applyPreset = (p: (typeof REGEX_PRESETS)[number]): void => {
-    update({ pattern: p.pattern, flags: p.flags });
+    setState((prev) => ({ ...prev, pattern: p.pattern, flags: p.flags }));
   };
 
   const validation = useMemo(() => validatePattern({ pattern: state.pattern }), [state.pattern]);
@@ -61,7 +59,7 @@ export function RegexTester({ clipboardText, clipboardMatch }: ToolProps): React
         <span className="text-gray-400 font-mono text-sm">/</span>
         <input
           value={state.pattern}
-          onChange={(e) => update({ pattern: e.target.value })}
+          onChange={(e) => setState((prev) => ({ ...prev, pattern: e.target.value }))}
           placeholder="Enter a regex pattern..."
           className="flex-1 bg-transparent text-sm font-mono outline-none text-gray-800 dark:text-gray-200 placeholder:text-gray-300 dark:placeholder:text-gray-600"
           spellCheck={false}
@@ -84,7 +82,7 @@ export function RegexTester({ clipboardText, clipboardMatch }: ToolProps): React
       <div className="flex-1 grid grid-cols-2 min-h-0">
         <textarea
           value={state.testString}
-          onChange={(e) => update({ testString: e.target.value })}
+          onChange={(e) => setState((prev) => ({ ...prev, testString: e.target.value }))}
           placeholder="Paste text to test against the pattern..."
           className="p-3 bg-transparent text-sm font-mono resize-none outline-none border-r border-gray-200/60 dark:border-white/[0.06] text-gray-800 dark:text-gray-200 placeholder:text-gray-300 dark:placeholder:text-gray-600"
           spellCheck={false}

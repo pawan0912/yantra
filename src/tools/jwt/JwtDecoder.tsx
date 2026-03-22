@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
+import { useAtom, useSetAtom } from "jotai";
 import { ToolPane } from "../../components/layout/ToolPane";
-import { useToolState } from "../../hooks/useToolState";
+import { jwtToolAtoms } from "../../store/atoms";
 import { TabBar } from "../../components/ui/TabBar";
 import { Badge } from "../../components/ui/Badge";
 import { decodeJwt, getExpiry, getAlgorithm } from "./jwt.utils";
@@ -12,10 +13,8 @@ const SAMPLE_DATA = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3OD
 const TABS = ["Header", "Payload", "Info"] as const;
 
 export function JwtDecoder({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
-  const { state, update, reset } = useToolState({
-    toolId: "jwt",
-    initial: { input: "" },
-  });
+  const [state, setState] = useAtom(jwtToolAtoms.stateAtom);
+  const reset = useSetAtom(jwtToolAtoms.resetAtom);
 
   const [activeTab, setActiveTab] = useState<string>("Header");
 
@@ -101,7 +100,7 @@ export function JwtDecoder({ clipboardText, clipboardMatch }: ToolProps): React.
   return (
     <ToolPane
       inputValue={state.input}
-      onInputChange={(v: string) => update({ input: v })}
+      onInputChange={(v: string) => setState((prev) => ({ ...prev, input: v }))}
       outputValue={outputText}
       outputElement={outputElement}
       sampleData={SAMPLE_DATA}

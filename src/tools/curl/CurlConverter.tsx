@@ -1,6 +1,7 @@
 import { useMemo } from "react";
+import { useAtom, useSetAtom } from "jotai";
 import { ToolPane } from "../../components/layout/ToolPane";
-import { useToolState } from "../../hooks/useToolState";
+import { curlToolAtoms } from "../../store/atoms";
 import { parseCurl, toFetch, toAxios, toReactQuery, highlightCode } from "./curl.utils";
 import type { ToolProps } from "../registry";
 
@@ -21,10 +22,8 @@ const SAMPLE_DATA = `curl -X POST https://api.example.com/users \\
   -d '{"name": "John", "email": "john@example.com"}'`;
 
 export function CurlConverter({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
-  const { state, update, reset } = useToolState({
-    toolId: "curl",
-    initial: { input: "", format: "fetch" as OutputFormat },
-  });
+  const [state, setState] = useAtom(curlToolAtoms.stateAtom);
+  const reset = useSetAtom(curlToolAtoms.resetAtom);
 
   const parsed = useMemo(() => {
     if (!state.input.trim()) return null;
@@ -55,15 +54,15 @@ export function CurlConverter({ clipboardText, clipboardMatch }: ToolProps): Rea
   const error = state.input.trim() && parsed && !parsed.isValid ? parsed.error : undefined;
 
   const actions = [
-    { label: "fetch", onClick: () => update({ format: "fetch" }), active: state.format === "fetch" },
-    { label: "axios", onClick: () => update({ format: "axios" }), active: state.format === "axios" },
-    { label: "React Query", onClick: () => update({ format: "reactQuery" }), active: state.format === "reactQuery" },
+    { label: "fetch", onClick: () => setState((prev) => ({ ...prev, format: "fetch" as OutputFormat })), active: state.format === "fetch" },
+    { label: "axios", onClick: () => setState((prev) => ({ ...prev, format: "axios" as OutputFormat })), active: state.format === "axios" },
+    { label: "React Query", onClick: () => setState((prev) => ({ ...prev, format: "reactQuery" as OutputFormat })), active: state.format === "reactQuery" },
   ];
 
   return (
     <ToolPane
       inputValue={state.input}
-      onInputChange={(v: string) => update({ input: v })}
+      onInputChange={(v: string) => setState((prev) => ({ ...prev, input: v }))}
       outputValue={output}
       sampleData={SAMPLE_DATA}
       clipboardText={clipboardText}

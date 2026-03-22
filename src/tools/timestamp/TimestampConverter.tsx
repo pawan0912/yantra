@@ -1,6 +1,7 @@
 import { useMemo } from "react";
+import { useAtom, useSetAtom } from "jotai";
 import { ToolPane } from "../../components/layout/ToolPane";
-import { useToolState } from "../../hooks/useToolState";
+import { timestampToolAtoms } from "../../store/atoms";
 import {
   parseTimestamp,
   formatAllTimestamps,
@@ -33,10 +34,8 @@ function OutputRow({ label, value }: { label: string; value: string }): React.Re
 const SAMPLE_DATA = "1711036800";
 
 export function TimestampConverter({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
-  const { state, update, reset } = useToolState({
-    toolId: "timestamp",
-    initial: { input: "" },
-  });
+  const [state, setState] = useAtom(timestampToolAtoms.stateAtom);
+  const reset = useSetAtom(timestampToolAtoms.resetAtom);
 
   const result = useMemo((): { formats: AllFormats; detected: TimestampFormat } | { error: string } | null => {
     const trimmed = state.input.trim();
@@ -66,12 +65,12 @@ export function TimestampConverter({ clipboardText, clipboardMatch }: ToolProps)
   const error = result && "error" in result ? result.error : undefined;
 
   const handleNow = (): void => {
-    update({ input: String(Date.now()) });
+    setState((prev) => ({ ...prev, input: String(Date.now()) }));
   };
 
   const handleConvert = (): void => {
     /* result is computed reactively via useMemo — this is a no-op trigger kept for UX clarity */
-    if (!state.input.trim()) update({ input: String(Date.now()) });
+    if (!state.input.trim()) setState((prev) => ({ ...prev, input: String(Date.now()) }));
   };
 
   const outputElement = result && "formats" in result ? (
@@ -88,7 +87,7 @@ export function TimestampConverter({ clipboardText, clipboardMatch }: ToolProps)
   return (
     <ToolPane
       inputValue={state.input}
-      onInputChange={(v: string) => update({ input: v })}
+      onInputChange={(v: string) => setState((prev) => ({ ...prev, input: v }))}
       outputValue={outputValue}
       outputElement={outputElement}
       sampleData={SAMPLE_DATA}
