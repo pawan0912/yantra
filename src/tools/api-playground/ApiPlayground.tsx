@@ -6,18 +6,22 @@ import {
   sendRequest,
   generateId,
   toCurl,
+  createEmptyPair,
 } from "./api-playground.utils";
-import type { RequestConfig, HistoryEntry } from "./api-playground.utils";
+import type { RequestConfig, HttpMethod, HistoryEntry } from "./api-playground.utils";
+import { parseCurl } from "../curl/curl.utils";
 import { UrlBar } from "./components/UrlBar";
 import { RequestTabs } from "./components/RequestTabs";
 import { ResponseView } from "./components/ResponseView";
 import { HistoryPanel } from "./components/HistoryPanel";
+import { CurlImportModal } from "./components/CurlImportModal";
 
 export function ApiPlayground(_props: ToolProps): React.ReactElement {
   const [state, setState] = useAtom(apiPlaygroundAtoms.stateAtom);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(false);
+  const [showCurlImport, setShowCurlImport] = useState(false);
 
   const { request, response, history } = state;
 
@@ -71,6 +75,34 @@ export function ApiPlayground(_props: ToolProps): React.ReactElement {
     }
   };
 
+  const handleImportCurl = (curlCommand: string): void => {
+    const result = parseCurl({ input: curlCommand });
+    if (!result.isValid) {
+      setError(result.error);
+      return;
+    }
+
+    const headers = Object.entries(result.headers).map(([key, value]) => ({
+      key, value, enabled: true,
+    }));
+    if (headers.length === 0) {
+      headers.push(createEmptyPair());
+    }
+
+    updateRequest({
+      method: result.method as HttpMethod,
+      url: result.url,
+      headers,
+      body: result.body ?? "",
+      bodyType: result.body ? "json" : "none",
+      auth: result.auth
+        ? { type: "basic" as const, username: result.auth.value.split(":")[0], password: result.auth.value.split(":")[1] ?? "" }
+        : { type: "none" as const },
+    });
+    setShowCurlImport(false);
+    setError(null);
+  };
+
   return (
     <div className="flex flex-col h-full">
       {/* URL Bar */}
@@ -78,10 +110,12 @@ export function ApiPlayground(_props: ToolProps): React.ReactElement {
         method={request.method}
         url={request.url}
         loading={loading}
+        showHistory={showHistory}
         onMethodChange={(method) => updateRequest({ method, bodyType: method === "GET" || method === "HEAD" ? "none" : request.bodyType })}
         onUrlChange={(url) => updateRequest({ url })}
         onSend={handleSend}
         onCopyCurl={handleCopyCurl}
+        onImportCurl={() => setShowCurlImport(true)}
         onToggleHistory={() => setShowHistory((h) => !h)}
         historyCount={history.length}
       />
@@ -115,6 +149,14 @@ export function ApiPlayground(_props: ToolProps): React.ReactElement {
             <ResponseView response={response} loading={loading} />
           </div>
         </div>
+      )}
+
+      {/* cURL Import Modal */}
+      {showCurlImport && (
+        <CurlImportModal
+          onImport={handleImportCurl}
+          onClose={() => setShowCurlImport(false)}
+        />
       )}
     </div>
   );
