@@ -34,6 +34,12 @@ export function DiffViewer(_props: ToolProps): React.ReactElement {
   const stats = state.lines ? getDiffStats({ lines: state.lines }) : null;
   const unified = state.lines ? formatUnifiedDiff({ lines: state.lines }) : "";
 
+  const handleClear = (): void => {
+    setState((prev) => ({ ...prev, oldText: "", newText: "", lines: null }));
+  };
+
+  const hasContent = Boolean(state.oldText || state.newText || state.lines);
+
   const handleCompare = (): void => {
     let a = state.oldText;
     let b = state.newText;
@@ -48,6 +54,7 @@ export function DiffViewer(_props: ToolProps): React.ReactElement {
     <div className="flex flex-col h-full">
       {/* Action bar */}
       <div className="flex items-center gap-1.5 px-3 py-2 border-b border-gray-200/60 dark:border-white/[0.06]">
+        <Button variant="secondary" onClick={handleClear} disabled={!hasContent}>Clear</Button>
         <Button variant="secondary" onClick={handleCompare}>Compare</Button>
         {stats && (
           <div className="flex items-center gap-2 ml-2 text-xs">
