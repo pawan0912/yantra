@@ -23,9 +23,6 @@ export function ActionBar({
         Clear
       </Button>
 
-      {/* Separator */}
-      <div className="w-px h-4 bg-gray-200/60 dark:bg-white/[0.08] mx-0.5" />
-
       {/* Tool actions */}
       <Button variant="secondary" active={showHistory} onClick={onToggleHistory}>
         History

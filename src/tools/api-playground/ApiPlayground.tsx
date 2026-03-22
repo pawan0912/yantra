@@ -124,17 +124,7 @@ export function ApiPlayground(_props: ToolProps): React.ReactElement {
 
   return (
     <div className="flex flex-col h-full">
-      {/* URL Bar — method + url + send */}
-      <UrlBar
-        method={request.method}
-        url={request.url}
-        loading={loading}
-        onMethodChange={(method) => updateRequest({ method, bodyType: method === "GET" || method === "HEAD" ? "none" : request.bodyType })}
-        onUrlChange={(url) => updateRequest({ url })}
-        onSend={handleSend}
-      />
-
-      {/* Action Bar — new, clear, history, import, export */}
+      {/* Action Bar — new, clear, history, import, export (above URL bar) */}
       <ActionBar
         showHistory={showHistory}
         hasContent={hasContent}
@@ -143,6 +133,16 @@ export function ApiPlayground(_props: ToolProps): React.ReactElement {
         onToggleHistory={() => setShowHistory((h) => !h)}
         onImportCurl={() => setShowCurlImport(true)}
         onExportCurl={handleExportCurl}
+      />
+
+      {/* URL Bar — method + url + send */}
+      <UrlBar
+        method={request.method}
+        url={request.url}
+        loading={loading}
+        onMethodChange={(method) => updateRequest({ method, bodyType: method === "GET" || method === "HEAD" ? "none" : request.bodyType })}
+        onUrlChange={(url) => updateRequest({ url })}
+        onSend={handleSend}
       />
 
       {/* Error bar */}

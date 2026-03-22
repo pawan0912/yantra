@@ -126,11 +126,6 @@ export function ToolPane({
           Clear
         </Button>
 
-        {/* Separator between global and tool-specific actions */}
-        {actions.length > 0 && (
-          <div className="w-px h-4 bg-gray-200/60 dark:bg-white/[0.08] mx-0.5" />
-        )}
-
         {/* Tool-specific actions */}
         {actions.map((action) => (
           <Button
