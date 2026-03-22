@@ -23,7 +23,7 @@ const variants: Record<ButtonVariant, { normal: string; active: string }> = {
   },
   secondary: {
     normal: "px-3 py-1 text-xs font-medium rounded-md bg-gray-100/80 dark:bg-white/[0.06] text-gray-600 dark:text-gray-400 hover:bg-gray-200/80 dark:hover:bg-white/[0.1] active:scale-[0.97]",
-    active: "px-3 py-1 text-xs font-medium rounded-md bg-blue-500 text-white shadow-sm shadow-blue-500/25",
+    active: "px-3 py-1 text-xs font-medium rounded-md bg-gray-300/80 dark:bg-white/[0.14] text-gray-800 dark:text-gray-200 shadow-inner",
   },
   icon: {
     normal: "p-1 rounded-md text-gray-400/60 dark:text-gray-500/50 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-white/[0.06]",
