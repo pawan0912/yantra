@@ -2,6 +2,32 @@
 
 A fast, offline dev toolbox for macOS. Built with Tauri v2 + React.
 
+## Tools
+
+| Category | Tools |
+|----------|-------|
+| **JSON** | JSON Formatter, JSON → TypeScript/Zod |
+| **API** | URL Parser, cURL Converter, JWT Decoder, API Playground |
+| **Text** | Base64, Diff Viewer, Regex Tester |
+| **Misc** | Timestamp Converter, Color Converter |
+
+## Features
+
+- Native macOS app with system title bar, traffic lights, and window management
+- Command palette (`⌘K`) for quick tool switching
+- Collapsible sidebar grouped by category
+- Resizable split panes (input/output)
+- Smart clipboard detection with paste hint
+- Light/Dark/System theme with persistence
+- Segmented controls for mode switching, distinct from action buttons
+- React Compiler enabled for automatic memoization
+- Plugin-style architecture — each tool is self-contained and independently loadable
+- Enable/disable tools from Settings
+- API Playground with full HTTP client via Rust (bypasses CORS)
+- State persists across tool switching via Jotai atoms
+- 315 unit tests across all tool utilities
+- Production DMG at ~3.5MB
+
 ## Getting Started
 
 ### Prerequisites
@@ -13,27 +39,34 @@ A fast, offline dev toolbox for macOS. Built with Tauri v2 + React.
 ### Development
 
 ```bash
-# Install dependencies
 bun install
-
-# Run in development mode
 bun run tauri dev
 ```
 
 ### Build
 
 ```bash
-# Create a production .dmg
 bun run tauri build
+```
+
+The DMG is output to `src-tauri/target/release/bundle/dmg/`.
+
+### Tests
+
+```bash
+bun test
 ```
 
 ## Tech Stack
 
-- **Tauri v2** — native macOS app shell (~8MB binary)
-- **React 18** + **TypeScript** (strict mode)
+- **Tauri v2** — native macOS app shell
+- **React 19** + **TypeScript** (strict mode)
+- **React Compiler** — automatic memoization
 - **Tailwind CSS v4** — utility-first styling
-- **Lucide React** — icons
-- **Vanilla JS / Web APIs** — all transforms, zero heavy deps
+- **Jotai** — atomic state management
+- **Lucide React** — tree-shaken SVG icons
+- **Reqwest** (Rust) — HTTP client for API Playground
+- **Bun** — package manager and test runner
 
 ## Architecture
 
@@ -41,33 +74,35 @@ bun run tauri build
 src/
 ├── components/
 │   ├── layout/    # AppShell, ToolPane, CommandPalette, CopyButton
-│   └── ui/        # Button, Textarea, PaneHeader, Kbd, Card, etc.
+│   └── ui/        # Button, Textarea, SegmentedControl, PaneHeader, Kbd, Card
 ├── tools/
-│   ├── registry.ts    # Tool metadata + lazy imports
+│   ├── types.ts       # ToolPlugin interface
+│   ├── registry.ts    # All tool registrations + categories
 │   └── <tool>/
 │       ├── Tool.tsx       # React component
-│       └── tool.utils.ts  # Pure transform functions
-├── store/         # Clipboard, theme
-├── hooks/         # useClipboard, useTheme
+│       └── tool.utils.ts  # Pure transform functions (tested independently)
+├── store/
+│   ├── atoms.ts       # Jotai atoms (per-tool state, app config)
+│   └── theme.ts       # Theme persistence
+├── hooks/             # useClipboard, useTheme
 └── App.tsx
 ```
 
 ### Adding a New Tool
 
-1. Create a directory under `src/tools/<tool-name>/`
-2. Add `ToolComponent.tsx` and `tool.utils.ts`
-3. Add an entry to `src/tools/registry.ts`
+1. Create `src/tools/<tool-name>/` with component + utils
+2. Implement the `ToolPlugin` interface
+3. Add one entry to `src/tools/registry.ts`
 
-No changes to `App.tsx` or any other file needed.
+No changes to App, AppShell, or any other file needed.
 
 ## Keyboard Shortcuts
 
 | Shortcut | Action |
 |----------|--------|
-| `⌘ 1–9, 0` | Switch between tools |
 | `⌘ K` | Command palette |
 | `⌘ ,` | Settings |
-| `Ctrl+Shift+Space` | Quick launch (global) |
+| `⌘ Enter` | Send request (API Playground) |
 
 ## License
 
