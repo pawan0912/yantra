@@ -1,6 +1,7 @@
 import { atom } from "jotai";
 import type { DiffLine } from "../tools/diff/diff.utils";
 import type { ToolConfig } from "../tools/types";
+import type { RequestConfig, ResponseData, HistoryEntry } from "../tools/api-playground/api-playground.utils";
 
 // ── Tool configuration (enable/disable/reorder) ──
 
@@ -91,4 +92,20 @@ export const base64ToolAtoms = createToolAtoms({
 
 export const colorToolAtoms = createToolAtoms({
   initial: { input: "", output: "" },
+});
+
+export const apiPlaygroundAtoms = createToolAtoms({
+  initial: {
+    request: {
+      method: "GET" as RequestConfig["method"],
+      url: "",
+      params: [{ key: "", value: "", enabled: true }],
+      headers: [{ key: "Content-Type", value: "application/json", enabled: true }],
+      body: "",
+      bodyType: "none" as RequestConfig["bodyType"],
+      auth: { type: "none" as RequestConfig["auth"]["type"] },
+    },
+    response: null as ResponseData | null,
+    history: [] as HistoryEntry[],
+  },
 });

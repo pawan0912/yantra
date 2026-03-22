@@ -1,3 +1,5 @@
+mod http;
+
 use tauri::menu::{MenuBuilder, MenuItem, SubmenuBuilder, PredefinedMenuItem};
 use tauri::{Emitter, Manager, WebviewWindow};
 use tauri_plugin_global_shortcut::GlobalShortcutExt;
@@ -13,6 +15,7 @@ fn show_and_focus(window: &WebviewWindow) {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .invoke_handler(tauri::generate_handler![http::send_http_request])
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_positioner::init())

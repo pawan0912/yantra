@@ -10,6 +10,7 @@ import {
   FileType,
   Regex,
   GitCompareArrows,
+  Globe,
 } from "lucide-react";
 import type { ToolPlugin } from "./types";
 
@@ -158,5 +159,20 @@ export const tools: ToolPlugin[] = [
     ),
     tags: ["timestamp", "unix", "epoch", "date", "time", "iso"],
     matchClipboard: (t) => { const s = t.trim(); return /^\d{10,13}$/.test(s) || /^\d{4}-\d{2}-\d{2}/.test(s); },
+  },
+
+  // ── Network ──
+  {
+    id: "api-playground",
+    name: "API Playground",
+    description: "Lightweight HTTP client — send requests, inspect responses",
+    icon: Globe,
+    category: "network",
+    shortcut: "",
+    component: lazy(() =>
+      import("./api-playground/ApiPlayground").then((m) => ({ default: m.ApiPlayground }))
+    ),
+    tags: ["api", "http", "rest", "request", "response", "postman", "curl", "fetch", "playground"],
+    matchClipboard: (t) => /^https?:\/\//.test(t.trim()) || t.trim().toLowerCase().startsWith("curl"),
   },
 ];
