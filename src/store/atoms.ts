@@ -1,5 +1,30 @@
 import { atom } from "jotai";
 import type { DiffLine } from "../tools/diff/diff.utils";
+import type { ToolConfig } from "../tools/types";
+
+// ── Tool configuration (enable/disable/reorder) ──
+
+const STORAGE_KEY = "yantra-tool-config";
+
+function loadToolConfig(): Record<string, ToolConfig> {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : {};
+  } catch {
+    return {};
+  }
+}
+
+export const toolConfigAtom = atom<Record<string, ToolConfig>>(loadToolConfig());
+
+/** Write-only atom that updates config and persists to localStorage */
+export const setToolConfigAtom = atom(
+  null,
+  (_get, set, update: Record<string, ToolConfig>) => {
+    set(toolConfigAtom, update);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(update));
+  }
+);
 
 /**
  * Factory to create a pair of atoms for tool input/output state.
