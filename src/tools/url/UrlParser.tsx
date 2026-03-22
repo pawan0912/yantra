@@ -49,11 +49,15 @@ export function UrlParser({ clipboardText, clipboardMatch }: ToolProps): React.R
       clipboardMatch={clipboardMatch}
       onClear={reset}
       placeholder="Paste a URL to parse, encode, or decode..."
-      actions={[
-        { label: "Parse", onClick: () => setState((prev) => ({ ...prev, mode: "parse" as const })), active: state.mode === "parse" },
-        { label: "Encode", onClick: () => setState((prev) => ({ ...prev, mode: "encode" as const })), active: state.mode === "encode" },
-        { label: "Decode", onClick: () => setState((prev) => ({ ...prev, mode: "decode" as const })), active: state.mode === "decode" },
-      ]}
+      mode={{
+        options: [
+          { value: "parse", label: "Parse" },
+          { value: "encode", label: "Encode" },
+          { value: "decode", label: "Decode" },
+        ],
+        value: state.mode,
+        onChange: (v) => setState((prev) => ({ ...prev, mode: v as "parse" | "encode" | "decode" })),
+      }}
       meta={meta}
       error={error}
     />

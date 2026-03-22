@@ -51,14 +51,6 @@ export function Base64Tool({ clipboardText, clipboardMatch }: ToolProps): React.
       <div className="flex items-center gap-3 px-3 py-2 border-b border-gray-200 dark:border-gray-700">
         <Toggle
           options={[
-            { label: "Encode", value: "encode" },
-            { label: "Decode", value: "decode" },
-          ]}
-          value={state.mode}
-          onChange={handleModeChange}
-        />
-        <Toggle
-          options={[
             { label: "Standard", value: "standard" },
             { label: "URL-safe", value: "urlsafe" },
           ]}
@@ -94,7 +86,14 @@ export function Base64Tool({ clipboardText, clipboardMatch }: ToolProps): React.
       clipboardMatch={clipboardMatch}
       onClear={reset}
       placeholder="Paste text to encode or Base64 to decode..."
-      actions={[]}
+      mode={{
+        options: [
+          { value: "encode", label: "Encode" },
+          { value: "decode", label: "Decode" },
+        ],
+        value: state.mode,
+        onChange: handleModeChange,
+      }}
       error={error}
     />
   );

@@ -7,3 +7,4 @@ export { SectionTitle } from "./SectionTitle";
 export { Badge } from "./Badge";
 export { Toggle } from "./Toggle";
 export { TabBar } from "./TabBar";
+export { SegmentedControl } from "./SegmentedControl";

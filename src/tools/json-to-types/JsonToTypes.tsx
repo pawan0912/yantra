@@ -49,10 +49,14 @@ export function JsonToTypes({ clipboardText, clipboardMatch }: ToolProps): React
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
       onClear={reset}
-      actions={[
-        { label: "TypeScript", onClick: () => setState((prev) => ({ ...prev, mode: "typescript" as OutputMode })), active: state.mode === "typescript" },
-        { label: "Zod", onClick: () => setState((prev) => ({ ...prev, mode: "zod" as OutputMode })), active: state.mode === "zod" },
-      ]}
+      mode={{
+        options: [
+          { value: "typescript", label: "TypeScript" },
+          { value: "zod", label: "Zod" },
+        ],
+        value: state.mode,
+        onChange: (v) => setState((prev) => ({ ...prev, mode: v as OutputMode })),
+      }}
       meta={result.meta}
       error={result.error}
     />

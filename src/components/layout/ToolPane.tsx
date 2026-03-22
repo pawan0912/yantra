@@ -2,12 +2,17 @@ import { useState, useEffect, useRef } from "react";
 import { ClipboardPaste } from "lucide-react";
 import { CopyButton } from "./CopyButton";
 import { cn } from "../../lib/utils";
-import { Button, Textarea, PaneHeader } from "../ui";
+import { Button, Textarea, PaneHeader, SegmentedControl } from "../ui";
 
 type ToolAction = {
   label: string;
   onClick: () => void;
-  active?: boolean;
+};
+
+type ToolMode<T extends string = string> = {
+  options: ReadonlyArray<{ value: T; label: string }>;
+  value: T;
+  onChange: (value: T) => void;
 };
 
 type ToolPaneProps = {
@@ -15,7 +20,8 @@ type ToolPaneProps = {
   onInputChange: (value: string) => void;
   outputValue: string;
   outputElement?: React.ReactNode;
-  actions: ToolAction[];
+  actions?: ToolAction[];
+  mode?: ToolMode;
   meta?: string;
   error?: string;
   placeholder?: string;
@@ -48,7 +54,8 @@ export function ToolPane({
   onInputChange,
   outputValue,
   outputElement,
-  actions,
+  actions = [],
+  mode,
   meta,
   error,
   placeholder = "Paste or type here...",
@@ -126,17 +133,27 @@ export function ToolPane({
           Clear
         </Button>
 
-        {/* Tool-specific actions */}
+        {/* Tool-specific action buttons */}
         {actions.map((action) => (
           <Button
             key={action.label}
             onClick={action.onClick}
             variant="secondary"
-            active={action.active}
           >
             {action.label}
           </Button>
         ))}
+
+        {/* Mode selector — pushed to the right */}
+        {mode && (
+          <div className="ml-auto">
+            <SegmentedControl
+              options={mode.options}
+              value={mode.value}
+              onChange={mode.onChange}
+            />
+          </div>
+        )}
       </div>
 
       {/* Split pane — resizable */}

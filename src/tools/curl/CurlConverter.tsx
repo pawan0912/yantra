@@ -52,12 +52,6 @@ export function CurlConverter({ clipboardText, clipboardMatch }: ToolProps): Rea
 
   const error = state.input.trim() && parsed && !parsed.isValid ? parsed.error : undefined;
 
-  const actions = [
-    { label: "fetch", onClick: () => setState((prev) => ({ ...prev, format: "fetch" as OutputFormat })), active: state.format === "fetch" },
-    { label: "axios", onClick: () => setState((prev) => ({ ...prev, format: "axios" as OutputFormat })), active: state.format === "axios" },
-    { label: "React Query", onClick: () => setState((prev) => ({ ...prev, format: "reactQuery" as OutputFormat })), active: state.format === "reactQuery" },
-  ];
-
   return (
     <ToolPane
       inputValue={state.input}
@@ -76,7 +70,15 @@ export function CurlConverter({ clipboardText, clipboardMatch }: ToolProps): Rea
         ) : undefined
       }
       placeholder="Paste a cURL command to convert..."
-      actions={actions}
+      mode={{
+        options: [
+          { value: "fetch", label: "fetch" },
+          { value: "axios", label: "axios" },
+          { value: "reactQuery", label: "React Query" },
+        ],
+        value: state.format,
+        onChange: (v) => setState((prev) => ({ ...prev, format: v as OutputFormat })),
+      }}
       meta={meta}
       error={error}
     />
