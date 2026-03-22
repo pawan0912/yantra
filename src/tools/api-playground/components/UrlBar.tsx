@@ -1,4 +1,4 @@
-import { Send, Loader2 } from "lucide-react";
+import { Send, Loader2, ChevronDown } from "lucide-react";
 import { HTTP_METHODS, METHOD_COLORS } from "../api-playground.utils";
 import type { HttpMethod } from "../api-playground.utils";
 import { cn } from "../../../lib/utils";
@@ -25,21 +25,24 @@ export function UrlBar({
   return (
     <div className="flex items-center gap-1.5 px-3 py-2 border-b border-gray-200/60 dark:border-white/[0.06]">
       {/* Method selector */}
-      <select
-        value={method}
-        onChange={(e) => onMethodChange(e.target.value as HttpMethod)}
-        className={cn(
-          "text-[11px] font-bold rounded-md px-2 py-1.5 cursor-pointer appearance-none text-center w-[72px]",
-          "bg-gray-100/80 dark:bg-white/[0.06] border-none",
-          "focus:outline-none focus:ring-1 focus:ring-blue-500/30",
-          "transition-colors duration-150",
-          METHOD_COLORS[method]
-        )}
-      >
-        {HTTP_METHODS.map((m) => (
-          <option key={m} value={m}>{m}</option>
-        ))}
-      </select>
+      <div className="relative">
+        <select
+          value={method}
+          onChange={(e) => onMethodChange(e.target.value as HttpMethod)}
+          className={cn(
+            "text-[11px] font-bold rounded-md pl-2.5 pr-6 py-1.5 cursor-pointer appearance-none",
+            "bg-gray-100/80 dark:bg-white/[0.06] border-none",
+            "focus:outline-none focus:ring-1 focus:ring-blue-500/30",
+            "transition-colors duration-150",
+            METHOD_COLORS[method]
+          )}
+        >
+          {HTTP_METHODS.map((m) => (
+            <option key={m} value={m}>{m}</option>
+          ))}
+        </select>
+        <ChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 opacity-50 pointer-events-none" strokeWidth={2} />
+      </div>
 
       {/* URL input */}
       <input
