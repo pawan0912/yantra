@@ -1,5 +1,6 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { Button } from "../../components/ui";
+import { useToolState } from "../../hooks/useToolState";
 import {
   testRegex,
   getMatchRanges,
@@ -13,31 +14,31 @@ type ToolProps = { clipboardText: string; clipboardMatch: boolean };
 const ALL_FLAGS = ["g", "i", "m", "s", "u"] as const;
 
 export function RegexTester({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
-  const [pattern, setPattern] = useState("");
-  const [flags, setFlags] = useState("g");
-  const [testString, setTestString] = useState(clipboardMatch ? clipboardText : "");
+  const { state, update } = useToolState({
+    toolId: "regex",
+    initial: { pattern: "", flags: "g", testString: clipboardMatch ? clipboardText : "" },
+  });
 
   const toggleFlag = (f: string): void => {
-    setFlags((prev) => (prev.includes(f) ? prev.replace(f, "") : prev + f));
+    update({ flags: state.flags.includes(f) ? state.flags.replace(f, "") : state.flags + f });
   };
 
   const applyPreset = (p: (typeof REGEX_PRESETS)[number]): void => {
-    setPattern(p.pattern);
-    setFlags(p.flags);
+    update({ pattern: p.pattern, flags: p.flags });
   };
 
-  const validation = useMemo(() => validatePattern({ pattern }), [pattern]);
+  const validation = useMemo(() => validatePattern({ pattern: state.pattern }), [state.pattern]);
   const result = useMemo(
-    () => (pattern ? testRegex({ pattern, flags, testString }) : null),
-    [pattern, flags, testString],
+    () => (state.pattern ? testRegex({ pattern: state.pattern, flags: state.flags, testString: state.testString }) : null),
+    [state.pattern, state.flags, state.testString],
   );
   const ranges = useMemo(
-    () => (pattern ? getMatchRanges({ pattern, flags, testString }) : []),
-    [pattern, flags, testString],
+    () => (state.pattern ? getMatchRanges({ pattern: state.pattern, flags: state.flags, testString: state.testString }) : []),
+    [state.pattern, state.flags, state.testString],
   );
   const highlighted = useMemo(
-    () => highlightMatches({ testString, ranges }),
-    [testString, ranges],
+    () => highlightMatches({ testString: state.testString, ranges }),
+    [state.testString, ranges],
   );
 
   const groups =
@@ -59,8 +60,8 @@ export function RegexTester({ clipboardText, clipboardMatch }: ToolProps): React
       <div className="flex items-center gap-2 px-3 py-2 border-b border-gray-200/60 dark:border-white/[0.06]">
         <span className="text-gray-400 font-mono text-sm">/</span>
         <input
-          value={pattern}
-          onChange={(e) => setPattern(e.target.value)}
+          value={state.pattern}
+          onChange={(e) => update({ pattern: e.target.value })}
           placeholder="Enter a regex pattern..."
           className="flex-1 bg-transparent text-sm font-mono outline-none text-gray-800 dark:text-gray-200 placeholder:text-gray-300 dark:placeholder:text-gray-600"
           spellCheck={false}
@@ -68,12 +69,12 @@ export function RegexTester({ clipboardText, clipboardMatch }: ToolProps): React
         <span className="text-gray-400 font-mono text-sm">/</span>
         <div className="flex gap-1">
           {ALL_FLAGS.map((f) => (
-            <Button key={f} variant="small" active={flags.includes(f)} onClick={() => toggleFlag(f)} className="font-mono font-semibold">{f}</Button>
+            <Button key={f} variant="small" active={state.flags.includes(f)} onClick={() => toggleFlag(f)} className="font-mono font-semibold">{f}</Button>
           ))}
         </div>
       </div>
 
-      {!validation.valid && pattern && (
+      {!validation.valid && state.pattern && (
         <div className="px-3 py-1.5 text-xs text-red-500 bg-red-50 dark:bg-red-500/10">
           {validation.error}
         </div>
@@ -82,8 +83,8 @@ export function RegexTester({ clipboardText, clipboardMatch }: ToolProps): React
       {/* Test string + highlighted output */}
       <div className="flex-1 grid grid-cols-2 min-h-0">
         <textarea
-          value={testString}
-          onChange={(e) => setTestString(e.target.value)}
+          value={state.testString}
+          onChange={(e) => update({ testString: e.target.value })}
           placeholder="Paste text to test against the pattern..."
           className="p-3 bg-transparent text-sm font-mono resize-none outline-none border-r border-gray-200/60 dark:border-white/[0.06] text-gray-800 dark:text-gray-200 placeholder:text-gray-300 dark:placeholder:text-gray-600"
           spellCheck={false}

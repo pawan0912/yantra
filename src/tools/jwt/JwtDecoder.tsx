@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { ToolPane } from "../../components/layout/ToolPane";
+import { useToolState } from "../../hooks/useToolState";
 import { TabBar } from "../../components/ui/TabBar";
 import { Badge } from "../../components/ui/Badge";
 import { decodeJwt, getExpiry, getAlgorithm } from "./jwt.utils";
@@ -11,19 +12,23 @@ const SAMPLE_DATA = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3OD
 const TABS = ["Header", "Payload", "Info"] as const;
 
 export function JwtDecoder({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
-  const [input, setInput] = useState("");
+  const { state, update, reset } = useToolState({
+    toolId: "jwt",
+    initial: { input: "" },
+  });
+
   const [activeTab, setActiveTab] = useState<string>("Header");
 
   const decoded = useMemo(() => {
-    if (!input.trim()) return null;
+    if (!state.input.trim()) return null;
     try {
-      return decodeJwt({ token: input });
+      return decodeJwt({ token: state.input });
     } catch {
       return null;
     }
-  }, [input]);
+  }, [state.input]);
 
-  const error = input.trim() && !decoded ? "Invalid JWT token" : undefined;
+  const error = state.input.trim() && !decoded ? "Invalid JWT token" : undefined;
 
   const outputText = useMemo(() => {
     if (!decoded) return "";
@@ -95,13 +100,14 @@ export function JwtDecoder({ clipboardText, clipboardMatch }: ToolProps): React.
 
   return (
     <ToolPane
-      inputValue={input}
-      onInputChange={setInput}
+      inputValue={state.input}
+      onInputChange={(v: string) => update({ input: v })}
       outputValue={outputText}
       outputElement={outputElement}
       sampleData={SAMPLE_DATA}
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
+      onClear={reset}
       placeholder="Paste a JWT token to decode..."
       actions={[]}
       error={error}

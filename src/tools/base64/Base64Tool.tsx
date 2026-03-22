@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { ToolPane } from "../../components/layout/ToolPane";
+import { useToolState } from "../../hooks/useToolState";
 import { Toggle } from "../../components/ui/Toggle";
 import { encode, decode, isBase64Image, looksLikeBase64 } from "./base64.utils";
 import type { ToolProps } from "../registry";
@@ -10,40 +11,41 @@ type Variant = "standard" | "urlsafe";
 const SAMPLE_DATA = "Hello, World! This is a sample text for Base64 encoding. \u{1F680}";
 
 export function Base64Tool({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
-  const [input, setInput] = useState("");
-  const [mode, setMode] = useState<Mode>("encode");
-  const [variant, setVariant] = useState<Variant>("standard");
+  const { state, update, reset } = useToolState({
+    toolId: "base64",
+    initial: { input: "", mode: "encode" as Mode, variant: "standard" as Variant },
+  });
   const [userSetMode, setUserSetMode] = useState(false);
 
   useEffect(() => {
-    if (!userSetMode && input && looksLikeBase64({ input })) {
-      setMode("decode");
+    if (!userSetMode && state.input && looksLikeBase64({ input: state.input })) {
+      update({ mode: "decode" });
     }
-  }, [input, userSetMode]);
+  }, [state.input, userSetMode]);
 
   const handleModeChange = (v: string): void => {
-    setMode(v as Mode);
+    update({ mode: v as Mode });
     setUserSetMode(true);
   };
 
   const { output, error } = useMemo(() => {
-    if (!input.trim()) return { output: "", error: undefined };
+    if (!state.input.trim()) return { output: "", error: undefined };
     try {
-      if (mode === "encode") {
-        return { output: encode({ input, urlSafe: variant === "urlsafe" }), error: undefined };
+      if (state.mode === "encode") {
+        return { output: encode({ input: state.input, urlSafe: state.variant === "urlsafe" }), error: undefined };
       }
-      return { output: decode({ input }), error: undefined };
+      return { output: decode({ input: state.input }), error: undefined };
     } catch (e) {
       return { output: "", error: e instanceof Error ? e.message : "Invalid input" };
     }
-  }, [input, mode, variant]);
+  }, [state.input, state.mode, state.variant]);
 
   const imagePreview = useMemo(() => {
-    if (mode !== "decode") return null;
-    const check = isBase64Image({ input });
-    if (check.isImage) return input;
+    if (state.mode !== "decode") return null;
+    const check = isBase64Image({ input: state.input });
+    if (check.isImage) return state.input;
     return null;
-  }, [mode, input]);
+  }, [state.mode, state.input]);
 
   const outputElement = (
     <div className="flex flex-col h-full">
@@ -53,7 +55,7 @@ export function Base64Tool({ clipboardText, clipboardMatch }: ToolProps): React.
             { label: "Encode", value: "encode" },
             { label: "Decode", value: "decode" },
           ]}
-          value={mode}
+          value={state.mode}
           onChange={handleModeChange}
         />
         <Toggle
@@ -61,8 +63,8 @@ export function Base64Tool({ clipboardText, clipboardMatch }: ToolProps): React.
             { label: "Standard", value: "standard" },
             { label: "URL-safe", value: "urlsafe" },
           ]}
-          value={variant}
-          onChange={(v) => setVariant(v as Variant)}
+          value={state.variant}
+          onChange={(v) => update({ variant: v as Variant })}
         />
       </div>
       <div className="flex-1 overflow-auto p-3">
@@ -84,13 +86,14 @@ export function Base64Tool({ clipboardText, clipboardMatch }: ToolProps): React.
 
   return (
     <ToolPane
-      inputValue={input}
-      onInputChange={setInput}
+      inputValue={state.input}
+      onInputChange={(v: string) => update({ input: v })}
       outputValue={output}
       outputElement={outputElement}
       sampleData={SAMPLE_DATA}
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
+      onClear={reset}
       placeholder="Paste text to encode or Base64 to decode..."
       actions={[]}
       error={error}

@@ -1,56 +1,60 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { ToolPane } from "../../components/layout/ToolPane";
+import { useToolState } from "../../hooks/useToolState";
 import { parseUrl, encodeUrlString, decodeUrlString } from "./url.utils";
 import type { ToolProps } from "../registry";
 
 const SAMPLE_DATA = "https://api.example.com/v2/users?page=1&limit=25&sort=name&filter=active#results";
 
 export function UrlParser({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
-  const [input, setInput] = useState("");
-  const [mode, setMode] = useState<"parse" | "encode" | "decode">("parse");
+  const { state, update, reset } = useToolState({
+    toolId: "url",
+    initial: { input: "", mode: "parse" as "parse" | "encode" | "decode" },
+  });
 
   const parsed = useMemo(() => {
-    if (!input.trim() || mode !== "parse") return null;
-    return parseUrl({ input: input.trim() });
-  }, [input, mode]);
+    if (!state.input.trim() || state.mode !== "parse") return null;
+    return parseUrl({ input: state.input.trim() });
+  }, [state.input, state.mode]);
 
   const outputValue = useMemo((): string => {
-    if (!input.trim()) return "";
-    if (mode === "encode") return encodeUrlString({ input });
-    if (mode === "decode") return decodeUrlString({ input });
+    if (!state.input.trim()) return "";
+    if (state.mode === "encode") return encodeUrlString({ input: state.input });
+    if (state.mode === "decode") return decodeUrlString({ input: state.input });
     return "";
-  }, [input, mode]);
+  }, [state.input, state.mode]);
 
   const meta = useMemo((): string | undefined => {
-    if (mode !== "parse" || !parsed || !parsed.isValid) return undefined;
+    if (state.mode !== "parse" || !parsed || !parsed.isValid) return undefined;
     const count = parsed.params.length;
     return `${count} param${count !== 1 ? "s" : ""}`;
-  }, [parsed, mode]);
+  }, [parsed, state.mode]);
 
   const error = useMemo((): string | undefined => {
-    if (mode !== "parse" || !parsed) return undefined;
+    if (state.mode !== "parse" || !parsed) return undefined;
     return parsed.isValid ? undefined : parsed.error;
-  }, [parsed, mode]);
+  }, [parsed, state.mode]);
 
   const outputElement = useMemo((): React.ReactNode | undefined => {
-    if (mode !== "parse" || !parsed || !parsed.isValid) return undefined;
+    if (state.mode !== "parse" || !parsed || !parsed.isValid) return undefined;
     return <ParsedOutput parsed={parsed} />;
-  }, [parsed, mode]);
+  }, [parsed, state.mode]);
 
   return (
     <ToolPane
-      inputValue={input}
-      onInputChange={setInput}
+      inputValue={state.input}
+      onInputChange={(v: string) => update({ input: v })}
       outputValue={outputValue}
       outputElement={outputElement}
       sampleData={SAMPLE_DATA}
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
+      onClear={reset}
       placeholder="Paste a URL to parse, encode, or decode..."
       actions={[
-        { label: "Parse", onClick: () => setMode("parse"), active: mode === "parse" },
-        { label: "Encode", onClick: () => setMode("encode"), active: mode === "encode" },
-        { label: "Decode", onClick: () => setMode("decode"), active: mode === "decode" },
+        { label: "Parse", onClick: () => update({ mode: "parse" }), active: state.mode === "parse" },
+        { label: "Encode", onClick: () => update({ mode: "encode" }), active: state.mode === "encode" },
+        { label: "Decode", onClick: () => update({ mode: "decode" }), active: state.mode === "decode" },
       ]}
       meta={meta}
       error={error}

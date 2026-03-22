@@ -1,5 +1,6 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { ToolPane } from "../../components/layout/ToolPane";
+import { useToolState } from "../../hooks/useToolState";
 import {
   parseTimestamp,
   formatAllTimestamps,
@@ -32,10 +33,13 @@ function OutputRow({ label, value }: { label: string; value: string }): React.Re
 const SAMPLE_DATA = "1711036800";
 
 export function TimestampConverter({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
-  const [input, setInput] = useState("");
+  const { state, update, reset } = useToolState({
+    toolId: "timestamp",
+    initial: { input: "" },
+  });
 
   const result = useMemo((): { formats: AllFormats; detected: TimestampFormat } | { error: string } | null => {
-    const trimmed = input.trim();
+    const trimmed = state.input.trim();
     if (!trimmed) return null;
 
     // Smart paste: try to extract timestamp from log line
@@ -49,7 +53,7 @@ export function TimestampConverter({ clipboardText, clipboardMatch }: ToolProps)
     const parsed = parseTimestamp({ input: target });
     if ("error" in parsed) return { error: parsed.error };
     return { formats: formatAllTimestamps({ date: parsed.date }), detected: parsed.format };
-  }, [input]);
+  }, [state.input]);
 
   const outputValue = result && "formats" in result
     ? Object.values(result.formats).map(String).join("\n")
@@ -62,12 +66,12 @@ export function TimestampConverter({ clipboardText, clipboardMatch }: ToolProps)
   const error = result && "error" in result ? result.error : undefined;
 
   const handleNow = (): void => {
-    setInput(String(Date.now()));
+    update({ input: String(Date.now()) });
   };
 
   const handleConvert = (): void => {
     /* result is computed reactively via useMemo — this is a no-op trigger kept for UX clarity */
-    if (!input.trim()) setInput(String(Date.now()));
+    if (!state.input.trim()) update({ input: String(Date.now()) });
   };
 
   const outputElement = result && "formats" in result ? (
@@ -83,13 +87,14 @@ export function TimestampConverter({ clipboardText, clipboardMatch }: ToolProps)
 
   return (
     <ToolPane
-      inputValue={input}
-      onInputChange={setInput}
+      inputValue={state.input}
+      onInputChange={(v: string) => update({ input: v })}
       outputValue={outputValue}
       outputElement={outputElement}
       sampleData={SAMPLE_DATA}
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
+      onClear={reset}
       placeholder="Paste a Unix timestamp or date string..."
       actions={[
         { label: "Convert", onClick: handleConvert },

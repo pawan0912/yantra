@@ -1,57 +1,60 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { ToolPane } from "../../components/layout/ToolPane";
+import { useToolState } from "../../hooks/useToolState";
 import { formatJson, minifyJson, validateJson, getJsonMeta, highlightJson } from "./json.utils";
 import type { ToolProps } from "../registry";
 
 const SAMPLE_DATA = '{"name": "John Doe", "age": 30, "email": "john@example.com", "address": {"city": "San Francisco", "state": "CA"}, "hobbies": ["coding", "hiking", "photography"]}';
 
 export function JsonFormatter({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
+  const { state, update, reset } = useToolState({
+    toolId: "json",
+    initial: { input: "", output: "" },
+  });
 
   const validation = useMemo(() => {
-    if (!input.trim()) return null;
-    return validateJson({ input });
-  }, [input]);
+    if (!state.input.trim()) return null;
+    return validateJson({ input: state.input });
+  }, [state.input]);
 
   const meta = useMemo(() => {
-    if (!input.trim() || !validation?.valid) return undefined;
+    if (!state.input.trim() || !validation?.valid) return undefined;
     try {
-      const m = getJsonMeta({ input });
+      const m = getJsonMeta({ input: state.input });
       return `Valid · ${m.keyCount} keys · depth ${m.maxDepth}`;
     } catch {
       return undefined;
     }
-  }, [input, validation]);
+  }, [state.input, validation]);
 
   const highlighted = useMemo(() => {
-    if (!output) return null;
-    return highlightJson({ json: output });
-  }, [output]);
+    if (!state.output) return null;
+    return highlightJson({ json: state.output });
+  }, [state.output]);
 
   const handleFormat = (): void => {
     try {
-      setOutput(formatJson({ input }));
+      update({ output: formatJson({ input: state.input }) });
     } catch {
-      setOutput("");
+      update({ output: "" });
     }
   };
 
   const handleMinify = (): void => {
     try {
-      setOutput(minifyJson({ input }));
+      update({ output: minifyJson({ input: state.input }) });
     } catch {
-      setOutput("");
+      update({ output: "" });
     }
   };
 
-  const error = input.trim() && validation && !validation.valid ? validation.error : undefined;
+  const error = state.input.trim() && validation && !validation.valid ? validation.error : undefined;
 
   return (
     <ToolPane
-      inputValue={input}
-      onInputChange={setInput}
-      outputValue={output}
+      inputValue={state.input}
+      onInputChange={(v: string) => update({ input: v })}
+      outputValue={state.output}
       sampleData={SAMPLE_DATA}
       outputElement={
         highlighted ? (
@@ -64,7 +67,7 @@ export function JsonFormatter({ clipboardText, clipboardMatch }: ToolProps): Rea
       placeholder="Paste JSON to format or minify..."
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
-      onClear={() => setOutput("")}
+      onClear={reset}
       actions={[
         { label: "Format", onClick: handleFormat },
         { label: "Minify", onClick: handleMinify },

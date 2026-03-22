@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { ToolPane } from "../../components/layout/ToolPane";
+import { useToolState } from "../../hooks/useToolState";
 import { parseColor, getAllFormats, detectColorFormat, toHex } from "./color.utils";
 import type { ToolProps } from "../registry";
 
@@ -24,12 +25,15 @@ function CopyIndicator({ text }: { text: string }): React.ReactElement {
 const SAMPLE_DATA = "#3b82f6";
 
 export function ColorConverter({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
-  const [input, setInput] = useState("");
+  const { state, update, reset } = useToolState({
+    toolId: "color",
+    initial: { input: "" },
+  });
 
   const parsed = useMemo(() => {
-    if (!input.trim()) return null;
-    return parseColor({ input });
-  }, [input]);
+    if (!state.input.trim()) return null;
+    return parseColor({ input: state.input });
+  }, [state.input]);
 
   const color = useMemo(() => {
     if (!parsed || !parsed.isValid) return null;
@@ -42,9 +46,9 @@ export function ColorConverter({ clipboardText, clipboardMatch }: ToolProps): Re
   }, [parsed]);
 
   const detectedFormat = useMemo(() => {
-    if (!input.trim()) return "";
-    return detectColorFormat({ input });
-  }, [input]);
+    if (!state.input.trim()) return "";
+    return detectColorFormat({ input: state.input });
+  }, [state.input]);
 
   const error = parsed && !parsed.isValid ? parsed.error : undefined;
 
@@ -89,15 +93,16 @@ export function ColorConverter({ clipboardText, clipboardMatch }: ToolProps): Re
 
   return (
     <ToolPane
-      inputValue={input}
-      onInputChange={setInput}
+      inputValue={state.input}
+      onInputChange={(v: string) => update({ input: v })}
       outputValue={color ? color.formats.hex : ""}
       outputElement={outputElement}
       sampleData={SAMPLE_DATA}
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
+      onClear={reset}
       placeholder="Paste a color value (hex, rgb, or hsl)..."
-      actions={[{ label: "Parse", onClick: () => setInput(input) }]}
+      actions={[{ label: "Parse", onClick: () => update({ input: state.input }) }]}
       meta={meta}
       error={error}
     />

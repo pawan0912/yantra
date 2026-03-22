@@ -1,5 +1,6 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { ToolPane } from "../../components/layout/ToolPane";
+import { useToolState } from "../../hooks/useToolState";
 import { parseCurl, toFetch, toAxios, toReactQuery, highlightCode } from "./curl.utils";
 import type { ToolProps } from "../registry";
 
@@ -20,23 +21,25 @@ const SAMPLE_DATA = `curl -X POST https://api.example.com/users \\
   -d '{"name": "John", "email": "john@example.com"}'`;
 
 export function CurlConverter({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
-  const [input, setInput] = useState("");
-  const [format, setFormat] = useState<OutputFormat>("fetch");
+  const { state, update, reset } = useToolState({
+    toolId: "curl",
+    initial: { input: "", format: "fetch" as OutputFormat },
+  });
 
   const parsed = useMemo(() => {
-    if (!input.trim()) return null;
-    return parseCurl({ input });
-  }, [input]);
+    if (!state.input.trim()) return null;
+    return parseCurl({ input: state.input });
+  }, [state.input]);
 
   const output = useMemo(() => {
     if (!parsed || !parsed.isValid) return "";
-    return generators[format]({
+    return generators[state.format]({
       method: parsed.method,
       url: parsed.url,
       headers: parsed.headers,
       body: parsed.body,
     });
-  }, [parsed, format]);
+  }, [parsed, state.format]);
 
   const highlighted = useMemo(() => {
     if (!output) return null;
@@ -49,22 +52,23 @@ export function CurlConverter({ clipboardText, clipboardMatch }: ToolProps): Rea
     return `${parsed.method} ${truncatedUrl}`;
   }, [parsed]);
 
-  const error = input.trim() && parsed && !parsed.isValid ? parsed.error : undefined;
+  const error = state.input.trim() && parsed && !parsed.isValid ? parsed.error : undefined;
 
   const actions = [
-    { label: "fetch", onClick: () => setFormat("fetch"), active: format === "fetch" },
-    { label: "axios", onClick: () => setFormat("axios"), active: format === "axios" },
-    { label: "React Query", onClick: () => setFormat("reactQuery"), active: format === "reactQuery" },
+    { label: "fetch", onClick: () => update({ format: "fetch" }), active: state.format === "fetch" },
+    { label: "axios", onClick: () => update({ format: "axios" }), active: state.format === "axios" },
+    { label: "React Query", onClick: () => update({ format: "reactQuery" }), active: state.format === "reactQuery" },
   ];
 
   return (
     <ToolPane
-      inputValue={input}
-      onInputChange={setInput}
+      inputValue={state.input}
+      onInputChange={(v: string) => update({ input: v })}
       outputValue={output}
       sampleData={SAMPLE_DATA}
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
+      onClear={reset}
       outputElement={
         highlighted ? (
           <pre

@@ -1,5 +1,6 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { ToolPane } from "../../components/layout/ToolPane";
+import { useToolState } from "../../hooks/useToolState";
 import { jsonToTypeScript, jsonToZod, countFields } from "./json-to-types.utils";
 import type { ToolProps } from "../registry";
 
@@ -8,16 +9,18 @@ type OutputMode = "typescript" | "zod";
 const SAMPLE_DATA = '{"id": 1, "name": "John Doe", "email": "john@example.com", "isActive": true, "roles": ["admin", "user"], "profile": {"avatar": "https://example.com/avatar.png", "bio": null}}';
 
 export function JsonToTypes({ clipboardText, clipboardMatch }: ToolProps): React.ReactElement {
-  const [input, setInput] = useState("");
-  const [mode, setMode] = useState<OutputMode>("typescript");
+  const { state, update, reset } = useToolState({
+    toolId: "json-to-types",
+    initial: { input: "", mode: "typescript" as OutputMode },
+  });
 
   const result = useMemo(() => {
-    const trimmed = input.trim();
+    const trimmed = state.input.trim();
     if (!trimmed) return { output: "", error: undefined, meta: undefined };
 
     try {
       const output =
-        mode === "typescript"
+        state.mode === "typescript"
           ? jsonToTypeScript({ input: trimmed })
           : jsonToZod({ input: trimmed });
       const fields = countFields({ input: trimmed });
@@ -29,12 +32,12 @@ export function JsonToTypes({ clipboardText, clipboardMatch }: ToolProps): React
         meta: undefined,
       };
     }
-  }, [input, mode]);
+  }, [state.input, state.mode]);
 
   return (
     <ToolPane
-      inputValue={input}
-      onInputChange={setInput}
+      inputValue={state.input}
+      onInputChange={(v: string) => update({ input: v })}
       outputValue={result.output}
       sampleData={SAMPLE_DATA}
       outputElement={
@@ -47,9 +50,10 @@ export function JsonToTypes({ clipboardText, clipboardMatch }: ToolProps): React
       placeholder="Paste JSON to generate TypeScript types or Zod schemas..."
       clipboardText={clipboardText}
       clipboardMatch={clipboardMatch}
+      onClear={reset}
       actions={[
-        { label: "TypeScript", onClick: () => setMode("typescript"), active: mode === "typescript" },
-        { label: "Zod", onClick: () => setMode("zod"), active: mode === "zod" },
+        { label: "TypeScript", onClick: () => update({ mode: "typescript" }), active: state.mode === "typescript" },
+        { label: "Zod", onClick: () => update({ mode: "zod" }), active: state.mode === "zod" },
       ]}
       meta={result.meta}
       error={result.error}
