@@ -87,13 +87,13 @@ export const tools: ToolPlugin[] = [
     matchClipboard: () => false,
   },
 
-  // ── Web ──
+  // ── API ──
   {
     id: "url",
     name: "URL Parser",
     description: "Parse, encode, and decode URLs",
     icon: Link,
-    category: "web",
+    category: "api",
     component: lazy(() =>
       import("./url/UrlParser").then((m) => ({ default: m.UrlParser }))
     ),
@@ -105,7 +105,7 @@ export const tools: ToolPlugin[] = [
     name: "cURL Converter",
     description: "Convert cURL commands to fetch, axios, or React Query",
     icon: Terminal,
-    category: "web",
+    category: "api",
     component: lazy(() =>
       import("./curl/CurlConverter").then((m) => ({ default: m.CurlConverter }))
     ),
@@ -117,7 +117,7 @@ export const tools: ToolPlugin[] = [
     name: "JWT Decoder",
     description: "Decode and inspect JWT tokens",
     icon: KeyRound,
-    category: "web",
+    category: "api",
     component: lazy(() =>
       import("./jwt/JwtDecoder").then((m) => ({ default: m.JwtDecoder }))
     ),
@@ -129,7 +129,7 @@ export const tools: ToolPlugin[] = [
     name: "API Playground",
     description: "Lightweight HTTP client — send requests, inspect responses",
     icon: Globe,
-    category: "web",
+    category: "api",
     component: lazy(() =>
       import("./api-playground/ApiPlayground").then((m) => ({ default: m.ApiPlayground }))
     ),

@@ -15,8 +15,8 @@ export type ToolProps = {
  */
 export const TOOL_CATEGORIES = [
   { id: "json", label: "JSON" },
+  { id: "api", label: "API" },
   { id: "text", label: "Text" },
-  { id: "web", label: "Web" },
   { id: "misc", label: "Misc" },
 ] as const;
 
