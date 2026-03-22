@@ -38,7 +38,9 @@ A fast, offline dev toolbox for macOS. Built with Tauri v2 + React.
 
 ### Install from DMG
 
-Download the latest `.dmg` from [Releases](https://github.com/pawan0912/yantra/releases). Since the app is not notarized with Apple, macOS will block it. After downloading, run:
+Download the latest `.dmg` from [Releases](https://github.com/pawan0912/yantra/releases).
+
+**Important:** macOS blocks apps that are not notarized with Apple. You **must** run this command before opening the DMG:
 
 ```bash
 xattr -cr ~/Downloads/Yantra_*.dmg
