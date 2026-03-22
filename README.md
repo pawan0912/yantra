@@ -36,6 +36,16 @@ A fast, offline dev toolbox for macOS. Built with Tauri v2 + React.
 - [Bun](https://bun.sh/)
 - macOS (Xcode Command Line Tools)
 
+### Install from DMG
+
+Download the latest `.dmg` from [Releases](https://github.com/pawan0912/yantra/releases). Since the app is not notarized with Apple, macOS will block it. After downloading, run:
+
+```bash
+xattr -cr ~/Downloads/Yantra_*.dmg
+```
+
+Then open the DMG and drag Yantra to Applications.
+
 ### Development
 
 ```bash
