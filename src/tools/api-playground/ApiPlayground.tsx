@@ -6,11 +6,13 @@ import {
   sendRequest,
   generateId,
   toCurl,
+  createEmptyRequest,
   createEmptyPair,
 } from "./api-playground.utils";
 import type { RequestConfig, HttpMethod, HistoryEntry } from "./api-playground.utils";
 import { parseCurl } from "../curl/curl.utils";
 import { UrlBar } from "./components/UrlBar";
+import { ActionBar } from "./components/ActionBar";
 import { RequestTabs } from "./components/RequestTabs";
 import { ResponseView } from "./components/ResponseView";
 import { HistoryPanel } from "./components/HistoryPanel";
@@ -29,10 +31,24 @@ export function ApiPlayground(_props: ToolProps): React.ReactElement {
     setState((prev) => ({ ...prev, request: { ...prev.request, ...partial } }));
   };
 
+  const handleNew = (): void => {
+    const fresh = createEmptyRequest();
+    setState((prev) => ({ ...prev, request: fresh, response: null }));
+    setError(null);
+    setShowHistory(false);
+  };
+
+  const handleClear = (): void => {
+    const fresh = createEmptyRequest();
+    setState((prev) => ({ ...prev, request: fresh, response: null }));
+    setError(null);
+  };
+
   const handleSend = async (): Promise<void> => {
     if (!request.url.trim()) return;
     setLoading(true);
     setError(null);
+    setShowHistory(false);
 
     try {
       const result = await sendRequest({ config: request });
@@ -65,7 +81,7 @@ export function ApiPlayground(_props: ToolProps): React.ReactElement {
     setShowHistory(false);
   };
 
-  const handleCopyCurl = async (): Promise<void> => {
+  const handleExportCurl = async (): Promise<void> => {
     const curl = toCurl({ config: request });
     try {
       const { writeText } = await import("@tauri-apps/plugin-clipboard-manager");
@@ -100,24 +116,33 @@ export function ApiPlayground(_props: ToolProps): React.ReactElement {
         : { type: "none" as const },
     });
     setShowCurlImport(false);
+    setShowHistory(false);
     setError(null);
   };
 
+  const hasContent = Boolean(request.url || request.body || response);
+
   return (
     <div className="flex flex-col h-full">
-      {/* URL Bar */}
+      {/* URL Bar — method + url + send */}
       <UrlBar
         method={request.method}
         url={request.url}
         loading={loading}
-        showHistory={showHistory}
         onMethodChange={(method) => updateRequest({ method, bodyType: method === "GET" || method === "HEAD" ? "none" : request.bodyType })}
         onUrlChange={(url) => updateRequest({ url })}
         onSend={handleSend}
-        onCopyCurl={handleCopyCurl}
-        onImportCurl={() => setShowCurlImport(true)}
+      />
+
+      {/* Action Bar — new, clear, history, import, export */}
+      <ActionBar
+        showHistory={showHistory}
+        hasContent={hasContent}
+        onNew={handleNew}
+        onClear={handleClear}
         onToggleHistory={() => setShowHistory((h) => !h)}
-        historyCount={history.length}
+        onImportCurl={() => setShowCurlImport(true)}
+        onExportCurl={handleExportCurl}
       />
 
       {/* Error bar */}

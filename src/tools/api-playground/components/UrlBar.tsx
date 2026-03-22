@@ -1,4 +1,4 @@
-import { Send, Clock, Copy, Loader2, Import } from "lucide-react";
+import { Send, Loader2 } from "lucide-react";
 import { HTTP_METHODS, METHOD_COLORS } from "../api-playground.utils";
 import type { HttpMethod } from "../api-playground.utils";
 import { cn } from "../../../lib/utils";
@@ -7,18 +7,13 @@ type UrlBarProps = {
   method: HttpMethod;
   url: string;
   loading: boolean;
-  showHistory: boolean;
   onMethodChange: (method: HttpMethod) => void;
   onUrlChange: (url: string) => void;
   onSend: () => void;
-  onCopyCurl: () => void;
-  onImportCurl: () => void;
-  onToggleHistory: () => void;
-  historyCount: number;
 };
 
 export function UrlBar({
-  method, url, loading, showHistory, onMethodChange, onUrlChange, onSend, onCopyCurl, onImportCurl, onToggleHistory, historyCount,
+  method, url, loading, onMethodChange, onUrlChange, onSend,
 }: UrlBarProps): React.ReactElement {
   const handleKeyDown = (e: React.KeyboardEvent): void => {
     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
@@ -74,48 +69,6 @@ export function UrlBar({
           <Send className="w-3.5 h-3.5" strokeWidth={2} />
         )}
         Send
-      </button>
-
-      {/* Separator */}
-      <div className="w-px h-4 bg-gray-200/60 dark:bg-white/[0.08]" />
-
-      {/* Import cURL */}
-      <button
-        onClick={onImportCurl}
-        title="Import cURL"
-        className="p-1.5 rounded-md text-gray-400/60 dark:text-gray-500/50 hover:text-gray-600 dark:hover:text-gray-300
-                   hover:bg-gray-200/60 dark:hover:bg-white/[0.06] transition-colors duration-150"
-      >
-        <Import className="w-3.5 h-3.5" strokeWidth={1.8} />
-      </button>
-
-      {/* Copy as cURL */}
-      <button
-        onClick={onCopyCurl}
-        title="Copy as cURL"
-        className="p-1.5 rounded-md text-gray-400/60 dark:text-gray-500/50 hover:text-gray-600 dark:hover:text-gray-300
-                   hover:bg-gray-200/60 dark:hover:bg-white/[0.06] transition-colors duration-150"
-      >
-        <Copy className="w-3.5 h-3.5" strokeWidth={1.8} />
-      </button>
-
-      {/* History toggle */}
-      <button
-        onClick={onToggleHistory}
-        title="Request history"
-        className={cn(
-          "relative p-1.5 rounded-md transition-colors duration-150",
-          showHistory
-            ? "text-blue-500 dark:text-blue-400 bg-blue-500/10 dark:bg-blue-500/15"
-            : "text-gray-400/60 dark:text-gray-500/50 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-white/[0.06]"
-        )}
-      >
-        <Clock className="w-3.5 h-3.5" strokeWidth={1.8} />
-        {historyCount > 0 && !showHistory && (
-          <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-blue-500 text-[8px] text-white flex items-center justify-center font-bold">
-            {historyCount > 9 ? "9+" : historyCount}
-          </span>
-        )}
       </button>
     </div>
   );
