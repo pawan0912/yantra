@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useAtom, useSetAtom } from "jotai";
 import { ToolPane } from "../../components/layout/ToolPane";
 import { base64ToolAtoms } from "../../store/atoms";
-import { Toggle } from "../../components/ui/Toggle";
 import { encode, decode, isBase64Image, looksLikeBase64 } from "./base64.utils";
 import type { ToolProps } from "../registry";
 
@@ -46,34 +45,20 @@ export function Base64Tool({ clipboardText, clipboardMatch }: ToolProps): React.
     return null;
   })();
 
-  const outputElement = (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center gap-3 px-3 py-2 border-b border-gray-200 dark:border-gray-700">
-        <Toggle
-          options={[
-            { label: "Standard", value: "standard" },
-            { label: "URL-safe", value: "urlsafe" },
-          ]}
-          value={state.variant}
-          onChange={(v) => setState((prev) => ({ ...prev, variant: v as Variant }))}
+  const outputElement = imagePreview ? (
+    <div className="p-3">
+      <pre className="text-sm font-mono text-gray-900 dark:text-gray-100 whitespace-pre-wrap break-all mb-3">
+        {output}
+      </pre>
+      <div className="border border-gray-200/60 dark:border-white/[0.06] rounded-lg p-2">
+        <img
+          src={imagePreview}
+          alt="Decoded base64 image"
+          className="max-w-full max-h-48 object-contain"
         />
       </div>
-      <div className="flex-1 overflow-auto p-3">
-        <pre className="text-sm font-mono text-gray-900 dark:text-gray-100 whitespace-pre-wrap break-all">
-          {output}
-        </pre>
-        {imagePreview && (
-          <div className="mt-3 border border-gray-200 dark:border-gray-700 rounded p-2">
-            <img
-              src={imagePreview}
-              alt="Decoded base64 image"
-              className="max-w-full max-h-48 object-contain"
-            />
-          </div>
-        )}
-      </div>
     </div>
-  );
+  ) : undefined;
 
   return (
     <ToolPane
@@ -86,14 +71,24 @@ export function Base64Tool({ clipboardText, clipboardMatch }: ToolProps): React.
       clipboardMatch={clipboardMatch}
       onClear={reset}
       placeholder="Paste text to encode or Base64 to decode..."
-      mode={{
-        options: [
-          { value: "encode", label: "Encode" },
-          { value: "decode", label: "Decode" },
-        ],
-        value: state.mode,
-        onChange: handleModeChange,
-      }}
+      mode={[
+        {
+          options: [
+            { value: "encode", label: "Encode" },
+            { value: "decode", label: "Decode" },
+          ],
+          value: state.mode,
+          onChange: handleModeChange,
+        },
+        {
+          options: [
+            { value: "standard", label: "Standard" },
+            { value: "urlsafe", label: "URL-safe" },
+          ],
+          value: state.variant,
+          onChange: (v: string) => setState((prev) => ({ ...prev, variant: v as Variant })),
+        },
+      ]}
       error={error}
     />
   );

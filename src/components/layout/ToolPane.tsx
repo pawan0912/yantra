@@ -21,7 +21,7 @@ type ToolPaneProps = {
   outputValue: string;
   outputElement?: React.ReactNode;
   actions?: ToolAction[];
-  mode?: ToolMode;
+  mode?: ToolMode | ToolMode[];
   meta?: string;
   error?: string;
   placeholder?: string;
@@ -144,14 +144,17 @@ export function ToolPane({
           </Button>
         ))}
 
-        {/* Mode selector — pushed to the right */}
+        {/* Mode selectors — pushed to the right */}
         {mode && (
-          <div className="ml-auto">
-            <SegmentedControl
-              options={mode.options}
-              value={mode.value}
-              onChange={mode.onChange}
-            />
+          <div className="ml-auto flex items-center gap-1.5">
+            {(Array.isArray(mode) ? mode : [mode]).map((m, i) => (
+              <SegmentedControl
+                key={i}
+                options={m.options}
+                value={m.value}
+                onChange={m.onChange}
+              />
+            ))}
           </div>
         )}
       </div>
