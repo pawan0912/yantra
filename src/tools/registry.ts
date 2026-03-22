@@ -29,7 +29,7 @@ export const tools: ToolPlugin[] = [
     description: "Format, minify, and validate JSON",
     icon: Braces,
     category: "transform",
-    shortcut: "1",
+    shortcut: "1",  // ⌘1
     component: lazy(() =>
       import("./json/JsonFormatter").then((m) => ({ default: m.JsonFormatter }))
     ),
@@ -42,7 +42,7 @@ export const tools: ToolPlugin[] = [
     description: "Encode and decode Base64 strings",
     icon: Binary,
     category: "transform",
-    shortcut: "9",
+    shortcut: "2",
     component: lazy(() =>
       import("./base64/Base64Tool").then((m) => ({ default: m.Base64Tool }))
     ),
@@ -55,7 +55,7 @@ export const tools: ToolPlugin[] = [
     description: "Parse, encode, and decode URLs",
     icon: Link,
     category: "transform",
-    shortcut: "7",
+    shortcut: "3",
     component: lazy(() =>
       import("./url/UrlParser").then((m) => ({ default: m.UrlParser }))
     ),
@@ -68,7 +68,7 @@ export const tools: ToolPlugin[] = [
     description: "Convert between hex, RGB, and HSL color formats",
     icon: Palette,
     category: "transform",
-    shortcut: "0",
+    shortcut: "4",
     component: lazy(() =>
       import("./color/ColorConverter").then((m) => ({ default: m.ColorConverter }))
     ),
@@ -96,7 +96,7 @@ export const tools: ToolPlugin[] = [
     description: "Generate TypeScript interfaces or Zod schemas from JSON",
     icon: FileType,
     category: "generate",
-    shortcut: "3",
+    shortcut: "6",
     component: lazy(() =>
       import("./json-to-types/JsonToTypes").then((m) => ({ default: m.JsonToTypes }))
     ),
@@ -109,7 +109,7 @@ export const tools: ToolPlugin[] = [
     description: "Test regex patterns with live match highlighting",
     icon: Regex,
     category: "generate",
-    shortcut: "6",
+    shortcut: "7",
     component: lazy(() =>
       import("./regex/RegexTester").then((m) => ({ default: m.RegexTester }))
     ),
@@ -124,7 +124,7 @@ export const tools: ToolPlugin[] = [
     description: "Compare two texts and see line-by-line differences",
     icon: GitCompareArrows,
     category: "compare",
-    shortcut: "2",
+    shortcut: "8",
     component: lazy(() =>
       import("./diff/DiffViewer").then((m) => ({ default: m.DiffViewer }))
     ),
@@ -139,7 +139,7 @@ export const tools: ToolPlugin[] = [
     description: "Decode and inspect JWT tokens",
     icon: KeyRound,
     category: "inspect",
-    shortcut: "4",
+    shortcut: "9",
     component: lazy(() =>
       import("./jwt/JwtDecoder").then((m) => ({ default: m.JwtDecoder }))
     ),
@@ -152,7 +152,7 @@ export const tools: ToolPlugin[] = [
     description: "Convert between timestamp formats",
     icon: Clock,
     category: "inspect",
-    shortcut: "8",
+    shortcut: "0",
     component: lazy(() =>
       import("./timestamp/TimestampConverter").then((m) => ({ default: m.TimestampConverter }))
     ),
