@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useAtom, useSetAtom } from "jotai";
 import { ToolPane } from "../../components/layout/ToolPane";
 import { timestampToolAtoms } from "../../store/atoms";
@@ -37,7 +36,7 @@ export function TimestampConverter({ clipboardText, clipboardMatch }: ToolProps)
   const [state, setState] = useAtom(timestampToolAtoms.stateAtom);
   const reset = useSetAtom(timestampToolAtoms.resetAtom);
 
-  const result = useMemo((): { formats: AllFormats; detected: TimestampFormat } | { error: string } | null => {
+  const result = ((): { formats: AllFormats; detected: TimestampFormat } | { error: string } | null => {
     const trimmed = state.input.trim();
     if (!trimmed) return null;
 
@@ -52,7 +51,7 @@ export function TimestampConverter({ clipboardText, clipboardMatch }: ToolProps)
     const parsed = parseTimestamp({ input: target });
     if ("error" in parsed) return { error: parsed.error };
     return { formats: formatAllTimestamps({ date: parsed.date }), detected: parsed.format };
-  }, [state.input]);
+  })();
 
   const outputValue = result && "formats" in result
     ? Object.values(result.formats).map(String).join("\n")
@@ -69,7 +68,7 @@ export function TimestampConverter({ clipboardText, clipboardMatch }: ToolProps)
   };
 
   const handleConvert = (): void => {
-    /* result is computed reactively via useMemo — this is a no-op trigger kept for UX clarity */
+    /* result is computed reactively on each render — this is a no-op trigger kept for UX clarity */
     if (!state.input.trim()) setState((prev) => ({ ...prev, input: String(Date.now()) }));
   };
 

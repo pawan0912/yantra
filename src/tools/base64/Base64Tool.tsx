@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAtom, useSetAtom } from "jotai";
 import { ToolPane } from "../../components/layout/ToolPane";
 import { base64ToolAtoms } from "../../store/atoms";
@@ -27,7 +27,7 @@ export function Base64Tool({ clipboardText, clipboardMatch }: ToolProps): React.
     setUserSetMode(true);
   };
 
-  const { output, error } = useMemo(() => {
+  const { output, error } = (() => {
     if (!state.input.trim()) return { output: "", error: undefined };
     try {
       if (state.mode === "encode") {
@@ -37,14 +37,14 @@ export function Base64Tool({ clipboardText, clipboardMatch }: ToolProps): React.
     } catch (e) {
       return { output: "", error: e instanceof Error ? e.message : "Invalid input" };
     }
-  }, [state.input, state.mode, state.variant]);
+  })();
 
-  const imagePreview = useMemo(() => {
+  const imagePreview = (() => {
     if (state.mode !== "decode") return null;
     const check = isBase64Image({ input: state.input });
     if (check.isImage) return state.input;
     return null;
-  }, [state.mode, state.input]);
+  })();
 
   const outputElement = (
     <div className="flex flex-col h-full">

@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useAtom, useSetAtom } from "jotai";
 import { ToolPane } from "../../components/layout/ToolPane";
 import { curlToolAtoms } from "../../store/atoms";
@@ -25,12 +24,12 @@ export function CurlConverter({ clipboardText, clipboardMatch }: ToolProps): Rea
   const [state, setState] = useAtom(curlToolAtoms.stateAtom);
   const reset = useSetAtom(curlToolAtoms.resetAtom);
 
-  const parsed = useMemo(() => {
+  const parsed = (() => {
     if (!state.input.trim()) return null;
     return parseCurl({ input: state.input });
-  }, [state.input]);
+  })();
 
-  const output = useMemo(() => {
+  const output = (() => {
     if (!parsed || !parsed.isValid) return "";
     return generators[state.format]({
       method: parsed.method,
@@ -38,18 +37,18 @@ export function CurlConverter({ clipboardText, clipboardMatch }: ToolProps): Rea
       headers: parsed.headers,
       body: parsed.body,
     });
-  }, [parsed, state.format]);
+  })();
 
-  const highlighted = useMemo(() => {
+  const highlighted = (() => {
     if (!output) return null;
     return highlightCode({ code: output });
-  }, [output]);
+  })();
 
-  const meta = useMemo(() => {
+  const meta = (() => {
     if (!parsed || !parsed.isValid) return undefined;
     const truncatedUrl = parsed.url.length > 60 ? parsed.url.slice(0, 60) + "..." : parsed.url;
     return `${parsed.method} ${truncatedUrl}`;
-  }, [parsed]);
+  })();
 
   const error = state.input.trim() && parsed && !parsed.isValid ? parsed.error : undefined;
 

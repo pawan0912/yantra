@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Search } from "lucide-react";
 import { tools } from "../../tools/registry";
 import { cn } from "../../lib/utils";
@@ -25,7 +25,7 @@ export function CommandPalette({ isOpen, onClose, onSelect }: CommandPaletteProp
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const filtered = useMemo(() => {
+  const filtered = (() => {
     if (!query.trim()) return tools;
     return tools.filter(
       (tool) =>
@@ -33,7 +33,7 @@ export function CommandPalette({ isOpen, onClose, onSelect }: CommandPaletteProp
         fuzzyMatch(query, tool.description) ||
         tool.tags.some((tag) => fuzzyMatch(query, tag))
     );
-  }, [query]);
+  })();
 
   useEffect(() => {
     if (isOpen) {

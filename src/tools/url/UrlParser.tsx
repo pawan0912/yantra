@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useAtom, useSetAtom } from "jotai";
 import { ToolPane } from "../../components/layout/ToolPane";
 import { urlToolAtoms } from "../../store/atoms";
@@ -11,33 +10,33 @@ export function UrlParser({ clipboardText, clipboardMatch }: ToolProps): React.R
   const [state, setState] = useAtom(urlToolAtoms.stateAtom);
   const reset = useSetAtom(urlToolAtoms.resetAtom);
 
-  const parsed = useMemo(() => {
+  const parsed = (() => {
     if (!state.input.trim() || state.mode !== "parse") return null;
     return parseUrl({ input: state.input.trim() });
-  }, [state.input, state.mode]);
+  })();
 
-  const outputValue = useMemo((): string => {
+  const outputValue = ((): string => {
     if (!state.input.trim()) return "";
     if (state.mode === "encode") return encodeUrlString({ input: state.input });
     if (state.mode === "decode") return decodeUrlString({ input: state.input });
     return "";
-  }, [state.input, state.mode]);
+  })();
 
-  const meta = useMemo((): string | undefined => {
+  const meta = ((): string | undefined => {
     if (state.mode !== "parse" || !parsed || !parsed.isValid) return undefined;
     const count = parsed.params.length;
     return `${count} param${count !== 1 ? "s" : ""}`;
-  }, [parsed, state.mode]);
+  })();
 
-  const error = useMemo((): string | undefined => {
+  const error = ((): string | undefined => {
     if (state.mode !== "parse" || !parsed) return undefined;
     return parsed.isValid ? undefined : parsed.error;
-  }, [parsed, state.mode]);
+  })();
 
-  const outputElement = useMemo((): React.ReactNode | undefined => {
+  const outputElement = ((): React.ReactNode | undefined => {
     if (state.mode !== "parse" || !parsed || !parsed.isValid) return undefined;
     return <ParsedOutput parsed={parsed} />;
-  }, [parsed, state.mode]);
+  })();
 
   return (
     <ToolPane

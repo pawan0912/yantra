@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useAtom, useSetAtom } from "jotai";
 import { ToolPane } from "../../components/layout/ToolPane";
 import { colorToolAtoms } from "../../store/atoms";
@@ -29,12 +29,12 @@ export function ColorConverter({ clipboardText, clipboardMatch }: ToolProps): Re
   const [state, setState] = useAtom(colorToolAtoms.stateAtom);
   const reset = useSetAtom(colorToolAtoms.resetAtom);
 
-  const parsed = useMemo(() => {
+  const parsed = (() => {
     if (!state.input.trim()) return null;
     return parseColor({ input: state.input });
-  }, [state.input]);
+  })();
 
-  const color = useMemo(() => {
+  const color = (() => {
     if (!parsed || !parsed.isValid) return null;
     const formats = getAllFormats(parsed);
     const hex = toHex(parsed);
@@ -42,12 +42,12 @@ export function ColorConverter({ clipboardText, clipboardMatch }: ToolProps): Re
     const twArbitrary = `text-[${formats.hex}]`;
     const rnStyle = `color: '${formats.hex}'`;
     return { formats, hex, cssVar, twArbitrary, rnStyle };
-  }, [parsed]);
+  })();
 
-  const detectedFormat = useMemo(() => {
+  const detectedFormat = (() => {
     if (!state.input.trim()) return "";
     return detectColorFormat({ input: state.input });
-  }, [state.input]);
+  })();
 
   const error = parsed && !parsed.isValid ? parsed.error : undefined;
 

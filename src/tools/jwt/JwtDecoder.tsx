@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useAtom, useSetAtom } from "jotai";
 import { ToolPane } from "../../components/layout/ToolPane";
 import { jwtToolAtoms } from "../../store/atoms";
@@ -18,25 +18,25 @@ export function JwtDecoder({ clipboardText, clipboardMatch }: ToolProps): React.
 
   const [activeTab, setActiveTab] = useState<string>("Header");
 
-  const decoded = useMemo(() => {
+  const decoded = (() => {
     if (!state.input.trim()) return null;
     try {
       return decodeJwt({ token: state.input });
     } catch {
       return null;
     }
-  }, [state.input]);
+  })();
 
   const error = state.input.trim() && !decoded ? "Invalid JWT token" : undefined;
 
-  const outputText = useMemo(() => {
+  const outputText = (() => {
     if (!decoded) return "";
     if (activeTab === "Header") return JSON.stringify(decoded.header, null, 2);
     if (activeTab === "Payload") return JSON.stringify(decoded.payload, null, 2);
     return "";
-  }, [decoded, activeTab]);
+  })();
 
-  const outputElement = useMemo(() => {
+  const outputElement = (() => {
     if (!decoded) return undefined;
 
     const infoContent = (
@@ -95,7 +95,7 @@ export function JwtDecoder({ clipboardText, clipboardMatch }: ToolProps): React.
         </div>
       </div>
     );
-  }, [decoded, activeTab, outputText]);
+  })();
 
   return (
     <ToolPane

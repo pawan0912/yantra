@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useAtom } from "jotai";
 import { Button } from "../../components/ui";
 import { regexToolAtoms } from "../../store/atoms";
@@ -25,19 +24,10 @@ export function RegexTester(_props: ToolProps): React.ReactElement {
     setState((prev) => ({ ...prev, pattern: p.pattern, flags: p.flags }));
   };
 
-  const validation = useMemo(() => validatePattern({ pattern: state.pattern }), [state.pattern]);
-  const result = useMemo(
-    () => (state.pattern ? testRegex({ pattern: state.pattern, flags: state.flags, testString: state.testString }) : null),
-    [state.pattern, state.flags, state.testString],
-  );
-  const ranges = useMemo(
-    () => (state.pattern ? getMatchRanges({ pattern: state.pattern, flags: state.flags, testString: state.testString }) : []),
-    [state.pattern, state.flags, state.testString],
-  );
-  const highlighted = useMemo(
-    () => highlightMatches({ testString: state.testString, ranges }),
-    [state.testString, ranges],
-  );
+  const validation = validatePattern({ pattern: state.pattern });
+  const result = state.pattern ? testRegex({ pattern: state.pattern, flags: state.flags, testString: state.testString }) : null;
+  const ranges = state.pattern ? getMatchRanges({ pattern: state.pattern, flags: state.flags, testString: state.testString }) : [];
+  const highlighted = highlightMatches({ testString: state.testString, ranges });
 
   const groups =
     result && result.isValid

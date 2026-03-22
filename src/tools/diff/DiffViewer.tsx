@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useAtom } from "jotai";
 import { CopyButton } from "../../components/layout/CopyButton";
 import { Button, PaneHeader, Textarea } from "../../components/ui";
@@ -32,8 +31,8 @@ function DiffOutput({ lines }: { lines: DiffLine[] }): React.ReactElement {
 export function DiffViewer(_props: ToolProps): React.ReactElement {
   const [state, setState] = useAtom(diffToolAtoms.stateAtom);
 
-  const stats = useMemo(() => (state.lines ? getDiffStats({ lines: state.lines }) : null), [state.lines]);
-  const unified = useMemo(() => (state.lines ? formatUnifiedDiff({ lines: state.lines }) : ""), [state.lines]);
+  const stats = state.lines ? getDiffStats({ lines: state.lines }) : null;
+  const unified = state.lines ? formatUnifiedDiff({ lines: state.lines }) : "";
 
   const handleCompare = (): void => {
     let a = state.oldText;

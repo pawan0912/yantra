@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { listen } from "@tauri-apps/api/event";
 import { AppShell } from "./components/layout/AppShell";
 import { CommandPalette } from "./components/layout/CommandPalette";
@@ -36,32 +36,29 @@ export function App(): React.ReactElement {
   }, []);
 
   // When selecting a tool, exit settings view
-  const handleToolSelect = useCallback((toolId: string): void => {
+  const handleToolSelect = (toolId: string): void => {
     setActiveToolId(toolId);
     setShowSettings(false);
-  }, []);
+  };
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent): void => {
-      if (e.metaKey && e.key === "k") {
-        e.preventDefault();
-        setPaletteOpen((open) => !open);
-        return;
-      }
+  const handleKeyDown = (e: KeyboardEvent): void => {
+    if (e.metaKey && e.key === "k") {
+      e.preventDefault();
+      setPaletteOpen((open) => !open);
+      return;
+    }
 
-      if (e.metaKey && ((e.key >= "1" && e.key <= "9") || e.key === "0")) {
-        e.preventDefault();
-        const tool = tools.find((t) => t.shortcut === e.key);
-        if (tool) handleToolSelect(tool.id);
-        return;
-      }
+    if (e.metaKey && ((e.key >= "1" && e.key <= "9") || e.key === "0")) {
+      e.preventDefault();
+      const tool = tools.find((t) => t.shortcut === e.key);
+      if (tool) handleToolSelect(tool.id);
+      return;
+    }
 
-      if (e.key === "Escape" && paletteOpen) {
-        setPaletteOpen(false);
-      }
-    },
-    [paletteOpen, handleToolSelect]
-  );
+    if (e.key === "Escape" && paletteOpen) {
+      setPaletteOpen(false);
+    }
+  };
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);

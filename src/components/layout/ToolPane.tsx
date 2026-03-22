@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ClipboardPaste } from "lucide-react";
 import { CopyButton } from "./CopyButton";
 import { cn } from "../../lib/utils";
@@ -87,7 +87,7 @@ export function ToolPane({
   const hasContent = Boolean(inputValue || outputValue);
   const showPasteHint = clipboardText && !pasted && !inputValue;
 
-  const onMouseDown = useCallback((e: React.MouseEvent): void => {
+  const onMouseDown = (e: React.MouseEvent): void => {
     e.preventDefault();
     dragging.current = true;
 
@@ -110,7 +110,7 @@ export function ToolPane({
     document.body.style.userSelect = "none";
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
-  }, []);
+  };
 
   return (
     <div className="flex flex-col h-full">

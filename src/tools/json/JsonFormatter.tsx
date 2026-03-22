@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useAtom, useSetAtom } from "jotai";
 import { ToolPane } from "../../components/layout/ToolPane";
 import { jsonToolAtoms } from "../../store/atoms";
@@ -11,12 +10,12 @@ export function JsonFormatter({ clipboardText, clipboardMatch }: ToolProps): Rea
   const [state, setState] = useAtom(jsonToolAtoms.stateAtom);
   const reset = useSetAtom(jsonToolAtoms.resetAtom);
 
-  const validation = useMemo(() => {
+  const validation = (() => {
     if (!state.input.trim()) return null;
     return validateJson({ input: state.input });
-  }, [state.input]);
+  })();
 
-  const meta = useMemo(() => {
+  const meta = (() => {
     if (!state.input.trim() || !validation?.valid) return undefined;
     try {
       const m = getJsonMeta({ input: state.input });
@@ -24,12 +23,12 @@ export function JsonFormatter({ clipboardText, clipboardMatch }: ToolProps): Rea
     } catch {
       return undefined;
     }
-  }, [state.input, validation]);
+  })();
 
-  const highlighted = useMemo(() => {
+  const highlighted = (() => {
     if (!state.output) return null;
     return highlightJson({ json: state.output });
-  }, [state.output]);
+  })();
 
   const handleFormat = (): void => {
     try {

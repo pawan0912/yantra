@@ -21,6 +21,7 @@
         "@types/react": "^19.1.8",
         "@types/react-dom": "^19.1.6",
         "@vitejs/plugin-react": "^4.6.0",
+        "babel-plugin-react-compiler": "^1.0.0",
         "tailwindcss": "^4.2.2",
         "typescript": "~5.8.3",
         "vite": "^7.0.4",
@@ -261,6 +262,8 @@
     "@types/react-dom": ["@types/react-dom@19.2.3", "", { "peerDependencies": { "@types/react": "^19.2.0" } }, "sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ=="],
 
     "@vitejs/plugin-react": ["@vitejs/plugin-react@4.7.0", "", { "dependencies": { "@babel/core": "^7.28.0", "@babel/plugin-transform-react-jsx-self": "^7.27.1", "@babel/plugin-transform-react-jsx-source": "^7.27.1", "@rolldown/pluginutils": "1.0.0-beta.27", "@types/babel__core": "^7.20.5", "react-refresh": "^0.17.0" }, "peerDependencies": { "vite": "^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0" } }, "sha512-gUu9hwfWvvEDBBmgtAowQCojwZmJ5mcLn3aufeCsitijs3+f2NsrPtlAWIR6OPiqljl96GVCUbLe0HyqIpVaoA=="],
+
+    "babel-plugin-react-compiler": ["babel-plugin-react-compiler@1.0.0", "", { "dependencies": { "@babel/types": "^7.26.0" } }, "sha512-Ixm8tFfoKKIPYdCCKYTsqv+Fd4IJ0DQqMyEimo+pxUOMUR9cVPlwTrFt9Avu+3cb6Zp3mAzl+t1MrG2fxxKsxw=="],
 
     "baseline-browser-mapping": ["baseline-browser-mapping@2.10.9", "", { "bin": { "baseline-browser-mapping": "dist/cli.cjs" } }, "sha512-OZd0e2mU11ClX8+IdXe3r0dbqMEznRiT4TfbhYIbcRPZkqJ7Qwer8ij3GZAmLsRKa+II9V1v5czCkvmHH3XZBg=="],
 

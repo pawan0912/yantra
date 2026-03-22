@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useAtom, useSetAtom } from "jotai";
 import { ToolPane } from "../../components/layout/ToolPane";
 import { jsonToTypesToolAtoms } from "../../store/atoms";
@@ -13,7 +12,7 @@ export function JsonToTypes({ clipboardText, clipboardMatch }: ToolProps): React
   const [state, setState] = useAtom(jsonToTypesToolAtoms.stateAtom);
   const reset = useSetAtom(jsonToTypesToolAtoms.resetAtom);
 
-  const result = useMemo(() => {
+  const result = (() => {
     const trimmed = state.input.trim();
     if (!trimmed) return { output: "", error: undefined, meta: undefined };
 
@@ -31,7 +30,7 @@ export function JsonToTypes({ clipboardText, clipboardMatch }: ToolProps): React
         meta: undefined,
       };
     }
-  }, [state.input, state.mode]);
+  })();
 
   return (
     <ToolPane
