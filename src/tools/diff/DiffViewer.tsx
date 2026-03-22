@@ -48,7 +48,7 @@ export function DiffViewer(_props: ToolProps): React.ReactElement {
     <div className="flex flex-col h-full">
       {/* Action bar */}
       <div className="flex items-center gap-1.5 px-3 py-2 border-b border-gray-200/60 dark:border-white/[0.06]">
-        <Button variant="primary" onClick={handleCompare}>Compare</Button>
+        <Button variant="secondary" onClick={handleCompare}>Compare</Button>
         {stats && (
           <div className="flex items-center gap-2 ml-2 text-xs">
             <span className="text-green-600 dark:text-green-400">+{stats.added}</span>
